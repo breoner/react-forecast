@@ -1,9 +1,9 @@
 function NewsCard({ article }) {
   return (
     <article className="overflow-hidden rounded-[15px] bg-white text-black shadow-md transition-colors duration-300 dark:bg-[#242424] dark:text-white">
-      {article.urlToImage && (
+      {article.image_url && (
         <img
-          src={article.urlToImage}
+          src={article.image_url}
           alt={article.title}
           className="h-[180px] w-full object-cover"
         />

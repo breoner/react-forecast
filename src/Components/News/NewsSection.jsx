@@ -1,26 +1,38 @@
 import { useEffect, useState } from "react";
 import NewsCard from "./NewsCard";
 
-const API_KEY = import.meta.env.VITE_NEWS_API_KEY;
+const API_KEY = import.meta.env.VITE_THE_NEWS_API_KEY;
 
 function NewsSection() {
   const [news, setNews] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(4);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const getNews = async () => {
-      const response = await fetch(
-        `https://newsapi.org/v2/everything?q=technology&language=en&sortBy=publishedAt&apiKey=${API_KEY}`,
-      );
+      try {
+        setError("");
 
-      const data = await response.json();
+        const response = await fetch(
+          `https://api.thenewsapi.com/v1/news/all?api_token=${API_KEY}&categories=tech&language=en&limit=20`,
+        );
 
-      setNews(data.articles);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error?.message || "Failed to load news");
+        }
+
+        setNews(data.data || []);
+      } catch (error) {
+        console.error(error);
+        setError(error.message);
+        setNews([]);
+      }
     };
 
     getNews();
   }, []);
-
-  const [visibleCount, setVisibleCount] = useState(4);
 
   return (
     <section className="py-[60px]">
@@ -29,9 +41,15 @@ function NewsSection() {
           Technology news
         </h2>
 
+        {error && (
+          <p className="mt-[20px] text-center text-[12px] text-red-500">
+            {error}
+          </p>
+        )}
+
         <div className="mt-[30px] grid grid-cols-1 gap-[20px] md:grid-cols-2 xl:grid-cols-4">
           {news.slice(0, visibleCount).map((article) => (
-            <NewsCard key={article.url} article={article} />
+            <NewsCard key={article.uuid} article={article} />
           ))}
         </div>
 
