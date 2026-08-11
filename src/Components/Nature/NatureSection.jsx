@@ -8,22 +8,31 @@ function NatureSection() {
 
   useEffect(() => {
     const getImages = async () => {
-      const response = await fetch(
-        `https://pixabay.com/api/?key=${API_KEY}&q=nature&image_type=photo&orientation=horizontal&per_page=20`,
-      );
+      try {
+        const response = await fetch(
+          `https://pixabay.com/api/?key=${API_KEY}&q=nature&image_type=photo&orientation=horizontal&per_page=20`,
+        );
 
-      const data = await response.json();
+        if (!response.ok) {
+          throw new Error("Failed to load nature images");
+        }
 
-      setImages(data.hits);
+        const data = await response.json();
+
+        setImages(data.hits || []);
+      } catch (error) {
+        console.error(error);
+        setImages([]);
+      }
     };
 
     getImages();
   }, []);
 
   return (
-    <section className="py-[60px]">
-      <div className="mx-auto w-full max-w-[1160px] px-[10px]">
-        <h2 className="text-center text-[24px] font-semibold">
+    <section className="py-[45px] md:py-[60px]">
+      <div className="mx-auto w-full max-w-[1160px] px-[16px] md:px-[24px] xl:px-[10px]">
+        <h2 className="text-center text-[20px] font-semibold md:text-[24px]">
           Beautiful nature
         </h2>
 

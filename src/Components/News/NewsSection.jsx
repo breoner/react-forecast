@@ -6,6 +6,7 @@ const API_KEY = import.meta.env.VITE_THE_NEWS_API_KEY;
 function NewsSection() {
   const [news, setNews] = useState([]);
   const [visibleCount, setVisibleCount] = useState(4);
+
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -35,9 +36,9 @@ function NewsSection() {
   }, []);
 
   return (
-    <section className="py-[60px]">
-      <div className="mx-auto w-full max-w-[1160px] px-[10px]">
-        <h2 className="text-center text-[24px] font-semibold">
+    <section className="py-[45px] md:py-[60px]">
+      <div className="mx-auto w-full max-w-[1160px] px-[16px] md:px-[24px] xl:px-[10px]">
+        <h2 className="text-center text-[20px] font-semibold md:text-[24px]">
           Technology news
         </h2>
 
@@ -47,7 +48,7 @@ function NewsSection() {
           </p>
         )}
 
-        <div className="mt-[30px] grid grid-cols-1 gap-[20px] md:grid-cols-2 xl:grid-cols-4">
+        <div className="mt-[25px] grid grid-cols-1 gap-[20px] sm:grid-cols-2 xl:mt-[30px] xl:grid-cols-4">
           {news.slice(0, visibleCount).map((article) => (
             <NewsCard key={article.uuid} article={article} />
           ))}
@@ -58,7 +59,7 @@ function NewsSection() {
             <button
               type="button"
               onClick={() => setVisibleCount((count) => count + 4)}
-              className="rounded-[10px] bg-[#FFB36C] px-[24px] py-[10px] text-[12px] font-medium transition-all duration-200 hover:bg-[#FFA95D] active:scale-95"
+              className="rounded-[10px] bg-[#FFB36C] px-[24px] py-[10px] text-[12px] font-medium text-black transition-all duration-200 hover:bg-[#FFA95D] active:scale-95"
             >
               See more
             </button>

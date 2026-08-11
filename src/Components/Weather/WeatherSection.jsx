@@ -15,15 +15,18 @@ function WeatherSection({
   isDark,
 }) {
   const [selectedCityId, setSelectedCityId] = useState(null);
+
   const [detailsCityId, setDetailsCityId] = useState(null);
 
   const [forecastCityId, setForecastCityId] = useState(null);
+
   const [forecast, setForecast] = useState(null);
 
   const [showHourly, setShowHourly] = useState(false);
   const [showWeekly, setShowWeekly] = useState(false);
 
   const [assistantCityId, setAssistantCityId] = useState(null);
+
   const [assistantContentId, setAssistantContentId] = useState(null);
 
   if (cities.length === 0) {
@@ -31,6 +34,8 @@ function WeatherSection({
   }
 
   const selectedCity = cities.find((city) => city.id === detailsCityId);
+
+  const assistantCity = cities.find((city) => city.id === assistantContentId);
 
   const handleDetails = (id) => {
     if (selectedCityId === id) {
@@ -96,6 +101,21 @@ function WeatherSection({
     }
   };
 
+  const handleAssistant = (id) => {
+    if (assistantCityId === id) {
+      setAssistantCityId(null);
+
+      setTimeout(() => {
+        setAssistantContentId(null);
+      }, 500);
+
+      return;
+    }
+
+    setAssistantContentId(id);
+    setAssistantCityId(id);
+  };
+
   const handleDelete = (id) => {
     if (selectedCityId === id || detailsCityId === id) {
       setSelectedCityId(null);
@@ -117,31 +137,14 @@ function WeatherSection({
     onDelete(id);
   };
 
-  const handleAssistant = (id) => {
-    if (assistantCityId === id) {
-      setAssistantCityId(null);
-
-      setTimeout(() => {
-        setAssistantContentId(null);
-      }, 500);
-
-      return;
-    }
-
-    setAssistantContentId(id);
-    setAssistantCityId(id);
-  };
-
   const sortedCities = [...cities].sort(
     (a, b) => Number(b.isFavorite) - Number(a.isFavorite),
   );
 
-  const assistantCity = cities.find((city) => city.id === assistantContentId);
-
   return (
-    <section className="bg-white py-[60px] text-black transition-colors duration-300 dark:bg-[#121212] dark:text-white">
-      <div className="mx-auto w-full max-w-[1160px] px-[10px]">
-        <div className="flex flex-wrap justify-center gap-[40px]">
+    <section className="bg-white py-[40px] text-black transition-colors duration-300 dark:bg-[#121212] dark:text-white md:py-[60px]">
+      <div className="mx-auto w-full max-w-[1160px] px-[16px] md:px-[24px] xl:px-[10px]">
+        <div className="flex flex-wrap justify-center gap-[25px] md:gap-[40px]">
           {sortedCities.map((city) => (
             <WeatherCard
               key={city.id}

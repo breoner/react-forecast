@@ -1,4 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
+
 import { Navigation } from "swiper/modules";
 
 import "swiper/css";
@@ -10,20 +11,28 @@ function NatureSlider({ images }) {
   }
 
   return (
-    <div className="relative mt-[30px]">
+    <div className="relative mt-[25px] w-full overflow-hidden md:mt-[30px]">
       <Swiper
         modules={[Navigation]}
         navigation
-        spaceBetween={20}
+        spaceBetween={16}
         slidesPerView={1}
         speed={600}
         loop={images.length > 4}
         breakpoints={{
           640: {
             slidesPerView: 2,
+            spaceBetween: 18,
           },
+
+          1024: {
+            slidesPerView: 3,
+            spaceBetween: 20,
+          },
+
           1280: {
             slidesPerView: 4,
+            spaceBetween: 20,
           },
         }}
       >
@@ -33,7 +42,7 @@ function NatureSlider({ images }) {
               <img
                 src={image.webformatURL}
                 alt={image.tags}
-                className="h-[220px] w-full object-cover transition-transform duration-500 hover:scale-105"
+                className="h-[220px] w-full object-cover transition-transform duration-500 hover:scale-105 sm:h-[210px] md:h-[220px]"
               />
             </div>
           </SwiperSlide>

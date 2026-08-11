@@ -22,12 +22,12 @@ function Hero({ onSearch }) {
 
   const day = now.getDate();
 
-  const getDaySuffix = (day) => {
-    if (day >= 11 && day <= 13) {
+  const getDaySuffix = (dayNumber) => {
+    if (dayNumber >= 11 && dayNumber <= 13) {
       return "th";
     }
 
-    switch (day % 10) {
+    switch (dayNumber % 10) {
       case 1:
         return "st";
       case 2:
@@ -86,9 +86,9 @@ function Hero({ onSearch }) {
   };
 
   const handleSelectCity = (place) => {
-    const cityName = `${place.name}${place.state ? `, ${place.state}` : ""}${
-      place.country ? `, ${place.country}` : ""
-    }`;
+    const cityName = `${place.name}${
+      place.state ? `, ${place.state}` : ""
+    }${place.country ? `, ${place.country}` : ""}`;
 
     setCity(cityName);
     setSelectedPlace(place);
@@ -135,64 +135,67 @@ function Hero({ onSearch }) {
 
   return (
     <section
-      className="relative h-[595px] bg-cover bg-center font-['Montserrat'] text-white"
-      style={{ backgroundImage: `url(${heroBg})` }}
+      className="relative h-[520px] bg-cover bg-center font-['Montserrat'] text-white md:h-[595px]"
+      style={{
+        backgroundImage: `url(${heroBg})`,
+      }}
     >
       <div className="absolute inset-0 bg-black/48" />
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[313px] flex-col items-center px-[10px] md:max-w-[564px] xl:max-w-[1160px]">
-        <h1 className="pt-[55px] text-center text-[16px] font-semibold md:pt-[50px] md:text-[20px] xl:pt-[105px] xl:text-[40px]">
+      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1160px] flex-col items-center px-[16px] md:px-[24px] xl:px-[10px]">
+        <h1 className="pt-[55px] text-center text-[22px] font-semibold md:pt-[50px] md:text-[26px] xl:pt-[105px] xl:text-[40px]">
           Weather dashboard
         </h1>
 
-        <div className="mt-[40px] flex items-center justify-center md:mt-[45px] xl:mt-[80px]">
-          <p className="w-[155px] text-right text-[12px] font-medium md:w-[172px] md:text-[14px] xl:w-[345px] xl:text-[24px]">
+        <div className="mt-[45px] flex w-full max-w-[500px] items-center justify-center md:mt-[50px] xl:mt-[80px] xl:max-w-none">
+          <p className="w-[46%] text-right text-[11px] font-medium leading-[1.5] sm:text-[12px] md:w-[220px] md:text-[14px] xl:w-[345px] xl:text-[24px]">
             Create your personal list of favorite cities and always be aware of
             the weather.
           </p>
 
-          <div className="mx-[20px] h-[100px] w-[2px] shrink-0 bg-white md:mx-[38px] md:h-[110px] xl:mx-[50px] xl:h-[144px] xl:w-[3px]" />
+          <div className="mx-[16px] h-[95px] w-[2px] shrink-0 bg-white sm:mx-[22px] md:mx-[38px] md:h-[110px] xl:mx-[50px] xl:h-[144px] xl:w-[3px]" />
 
-          <p className="w-[110px] text-left text-[12px] font-medium md:w-[120px] md:text-[14px] xl:w-[190px] xl:text-[24px]">
+          <p className="w-[38%] text-left text-[11px] font-medium leading-[1.6] sm:text-[12px] md:w-[145px] md:text-[14px] xl:w-[190px] xl:text-[24px]">
             {monthYear}
             <br />
             {formattedDay}
           </p>
         </div>
 
-        <div className="relative mt-[65px] w-[250px] md:mt-[76px] md:w-[402px] xl:mt-[75px] xl:w-[625px]">
+        <div className="relative mt-[55px] w-full max-w-[320px] md:mt-[76px] md:max-w-[402px] xl:mt-[75px] xl:max-w-[625px]">
           <form
             onSubmit={handleSubmit}
-            className="flex h-[30px] md:h-[27px] xl:h-[42px]"
+            className="flex h-[38px] md:h-[36px] xl:h-[42px]"
           >
             <input
               type="text"
               placeholder="Search location..."
               value={city}
               onChange={handleChange}
-              className="h-full min-w-0 flex-1 rounded-l-[7px] bg-[#D9D9D9] px-[12px] text-[10px] font-medium text-black outline-none md:rounded-l-[10px] md:px-[20px] xl:px-[30px] xl:text-[14px]"
+              className="h-full min-w-0 flex-1 rounded-l-[8px] bg-[#D9D9D9] px-[14px] text-[11px] font-medium text-black outline-none placeholder:text-[#555555] md:rounded-l-[10px] md:px-[20px] md:text-[12px] xl:px-[30px] xl:text-[14px]"
             />
 
             <button
               type="submit"
-              className="flex h-[30px] w-[32px] shrink-0 items-center justify-center rounded-r-[7px] border-l-2 border-black bg-[#FFB36C] md:h-[27px] md:w-[29px] md:rounded-r-[10px] xl:h-[42px] xl:w-[45px]"
+              aria-label="Search city"
+              className="flex h-full w-[42px] shrink-0 items-center justify-center rounded-r-[8px] border-l-2 border-black bg-[#FFB36C] transition-colors duration-200 hover:bg-[#FFA95D] md:w-[42px] md:rounded-r-[10px] xl:w-[45px]"
             >
               <img
                 src={searchIcon}
-                alt="Search"
-                className="h-[15px] w-[15px] md:h-[16px] md:w-[16px] xl:h-[25px] xl:w-[25px]"
+                alt=""
+                className="h-[18px] w-[18px] xl:h-[25px] xl:w-[25px]"
               />
             </button>
           </form>
 
           {suggestions.length > 0 && (
-            <ul className="absolute left-0 top-full z-20 mt-[3px] w-[calc(100%-32px)] overflow-hidden rounded-[8px] bg-white text-black shadow-lg md:w-[calc(100%-29px)] xl:w-[calc(100%-45px)]">
+            <ul className="absolute left-0 top-full z-20 mt-[3px] w-[calc(100%-42px)] overflow-hidden rounded-[8px] bg-white text-black shadow-lg xl:w-[calc(100%-45px)]">
               {suggestions.map((place, index) => (
                 <li key={`${place.lat}-${place.lon}-${index}`}>
                   <button
                     type="button"
                     onClick={() => handleSelectCity(place)}
-                    className="w-full px-[12px] py-[7px] text-left text-[10px] hover:bg-[#E8E8E8] md:px-[20px] xl:text-[14px]"
+                    className="w-full px-[14px] py-[9px] text-left text-[11px] transition-colors hover:bg-[#E8E8E8] md:px-[20px] md:text-[12px] xl:text-[14px]"
                   >
                     {place.name}
                     {place.state ? `, ${place.state}` : ""}

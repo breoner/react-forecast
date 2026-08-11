@@ -33,19 +33,36 @@ function Header({ isDark, onToggleTheme }) {
   return (
     <>
       <header className="relative z-40 bg-white text-black transition-colors duration-300 dark:bg-[#171717] dark:text-white">
-        <div className="mx-auto flex h-[50px] w-full max-w-[313px] items-center justify-between px-[10px] md:h-[70px] md:max-w-[564px] xl:h-[80px] xl:max-w-[1160px]">
+        <div className="mx-auto flex h-[60px] w-full max-w-[1160px] items-center justify-between px-[16px] md:h-[70px] md:px-[24px] xl:h-[80px] xl:px-[10px]">
           <img
             src={logo}
             alt="Logo"
-            className={`h-[45px] w-auto transition-all duration-300 ${
+            className={`h-[32px] w-auto transition-all duration-300 md:h-[38px] xl:h-[45px] ${
               isDark ? "invert opacity-90" : ""
             }`}
           />
 
           <nav className="hidden items-center font-medium md:flex md:gap-[30px] md:text-[10px] xl:gap-[42px] xl:text-[12px]">
-            <a href="#">Who we are</a>
-            <a href="#">Contacts</a>
-            <a href="#">Menu</a>
+            <a
+              href="#"
+              className="transition-colors duration-200 hover:text-[#FF9D4D]"
+            >
+              Who we are
+            </a>
+
+            <a
+              href="#"
+              className="transition-colors duration-200 hover:text-[#FF9D4D]"
+            >
+              Contacts
+            </a>
+
+            <a
+              href="#"
+              className="transition-colors duration-200 hover:text-[#FF9D4D]"
+            >
+              Menu
+            </a>
           </nav>
 
           <div className="hidden items-center gap-[15px] md:flex">
@@ -61,17 +78,17 @@ function Header({ isDark, onToggleTheme }) {
             />
           </div>
 
-          <div className="flex items-center gap-[12px] md:hidden">
+          <div className="flex items-center gap-[10px] md:hidden">
             <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
 
             <button
               type="button"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex items-center gap-[8px] text-[12px] font-medium"
+              onClick={() => setIsMenuOpen((current) => !current)}
+              className="flex items-center gap-[7px] text-[11px] font-medium"
             >
               Menu
               <span
-                className={`h-[8px] w-[8px] border-b border-r border-current transition-transform ${
+                className={`h-[7px] w-[7px] border-b border-r border-current transition-transform duration-200 ${
                   isMenuOpen ? "rotate-[225deg]" : "rotate-45"
                 }`}
               />
