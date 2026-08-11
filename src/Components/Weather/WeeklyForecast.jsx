@@ -29,12 +29,12 @@ function WeeklyForecast({ forecast, onClose }) {
   });
 
   return (
-    <div className="relative mx-auto mt-[40px] w-full max-w-[900px] rounded-[20px] bg-[#E4E4E4] p-[30px]">
+    <div className="relative mx-auto mt-[40px] w-full max-w-[900px] rounded-[20px] bg-[#E4E4E4] p-[30px] text-black transition-colors duration-300 dark:bg-[#242424] dark:text-white">
       <button
         type="button"
         onClick={onClose}
         aria-label="Close weekly forecast"
-        className="absolute right-[18px] top-[14px] flex h-[30px] w-[30px] items-center justify-center rounded-full text-[26px] leading-none transition-all duration-200 hover:rotate-90 hover:bg-[#D0D0D0] active:scale-90"
+        className="absolute right-[18px] top-[14px] flex h-[30px] w-[30px] items-center justify-center rounded-full text-[26px] leading-none transition-all duration-200 hover:rotate-90 hover:bg-[#D0D0D0] dark:hover:bg-[#3A3A3A]"
       >
         ×
       </button>
@@ -42,7 +42,7 @@ function WeeklyForecast({ forecast, onClose }) {
       <h2 className="mb-[20px] text-[14px] font-medium">5-day forecast</h2>
 
       <div className="flex flex-col gap-[8px]">
-        {days.map((day, index) => {
+        {days.map((day) => {
           const date = new Date(day.dt * 1000);
 
           const formattedDate = date.toLocaleDateString("en-US", {
@@ -56,10 +56,7 @@ function WeeklyForecast({ forecast, onClose }) {
           return (
             <div
               key={day.dt}
-              className="grid grid-cols-[1fr_auto_1fr] items-center rounded-[8px] bg-[#D9D9D9] px-[20px] py-[6px] transition-all duration-200 hover:translate-x-[3px] hover:bg-[#D3D3D3]"
-              style={{
-                animationDelay: `${index * 60}ms`,
-              }}
+              className="grid grid-cols-1 gap-[8px] rounded-[8px] bg-[#D9D9D9] px-[20px] py-[8px] transition-all duration-200 hover:translate-x-[3px] hover:bg-[#D3D3D3] dark:bg-[#303030] dark:hover:bg-[#383838] sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-0"
             >
               <p className="text-[12px]">{formattedDate}</p>
 
@@ -76,7 +73,7 @@ function WeeklyForecast({ forecast, onClose }) {
                 </p>
               </div>
 
-              <p className="text-right text-[12px] capitalize">
+              <p className="text-[12px] capitalize sm:text-right">
                 {day.description}
               </p>
             </div>

@@ -3,6 +3,7 @@ import WeatherCard from "./WeatherCard";
 import WeatherDetails from "./WeatherDetails";
 import HourlyForecast from "./HourlyForecast";
 import WeeklyForecast from "./WeeklyForecast";
+import WeatherAssistant from "./WeatherAssistant";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -11,6 +12,7 @@ function WeatherSection({
   onDelete,
   onRefresh,
   onToggleFavorite,
+  isDark,
 }) {
   const [selectedCityId, setSelectedCityId] = useState(null);
   const [detailsCityId, setDetailsCityId] = useState(null);
@@ -21,13 +23,14 @@ function WeatherSection({
   const [showHourly, setShowHourly] = useState(false);
   const [showWeekly, setShowWeekly] = useState(false);
 
+  const [assistantCityId, setAssistantCityId] = useState(null);
+  const [assistantContentId, setAssistantContentId] = useState(null);
+
   if (cities.length === 0) {
     return null;
   }
 
-  const selectedCity = cities.find(
-    (city) => city.id === detailsCityId
-  );
+  const selectedCity = cities.find((city) => city.id === detailsCityId);
 
   const handleDetails = (id) => {
     if (selectedCityId === id) {
@@ -50,7 +53,7 @@ function WeatherSection({
     }
 
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${city.place.lat}&lon=${city.place.lon}&appid=${API_KEY}&units=metric`
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${city.place.lat}&lon=${city.place.lon}&appid=${API_KEY}&units=metric`,
     );
 
     if (!response.ok) {
@@ -106,16 +109,37 @@ function WeatherSection({
       setShowWeekly(false);
     }
 
+    if (assistantCityId === id || assistantContentId === id) {
+      setAssistantCityId(null);
+      setAssistantContentId(null);
+    }
+
     onDelete(id);
   };
 
+  const handleAssistant = (id) => {
+    if (assistantCityId === id) {
+      setAssistantCityId(null);
+
+      setTimeout(() => {
+        setAssistantContentId(null);
+      }, 500);
+
+      return;
+    }
+
+    setAssistantContentId(id);
+    setAssistantCityId(id);
+  };
+
   const sortedCities = [...cities].sort(
-    (a, b) =>
-      Number(b.isFavorite) - Number(a.isFavorite)
+    (a, b) => Number(b.isFavorite) - Number(a.isFavorite),
   );
 
+  const assistantCity = cities.find((city) => city.id === assistantContentId);
+
   return (
-    <section className="bg-white py-[60px]">
+    <section className="bg-white py-[60px] text-black transition-colors duration-300 dark:bg-[#121212] dark:text-white">
       <div className="mx-auto w-full max-w-[1160px] px-[10px]">
         <div className="flex flex-wrap justify-center gap-[40px]">
           {sortedCities.map((city) => (
@@ -127,17 +151,35 @@ function WeatherSection({
               onDetails={() => handleDetails(city.id)}
               onDelete={() => handleDelete(city.id)}
               onRefresh={() => onRefresh(city.id)}
-              onToggleFavorite={() =>
-                onToggleFavorite(city.id)
-              }
-              onHourlyForecast={() =>
-                handleHourlyForecast(city)
-              }
-              onWeeklyForecast={() =>
-                handleWeeklyForecast(city)
-              }
+              onToggleFavorite={() => onToggleFavorite(city.id)}
+              onHourlyForecast={() => handleHourlyForecast(city)}
+              onWeeklyForecast={() => handleWeeklyForecast(city)}
+              onAssistant={() => handleAssistant(city.id)}
             />
           ))}
+        </div>
+
+        <div
+          className={`grid transition-[grid-template-rows,opacity] duration-500 ease-in-out ${
+            assistantCityId
+              ? "grid-rows-[1fr] opacity-100"
+              : "grid-rows-[0fr] opacity-0"
+          }`}
+        >
+          <div className="overflow-hidden">
+            {assistantCity && (
+              <WeatherAssistant
+                weather={assistantCity.weather}
+                onClose={() => {
+                  setAssistantCityId(null);
+
+                  setTimeout(() => {
+                    setAssistantContentId(null);
+                  }, 500);
+                }}
+              />
+            )}
+          </div>
         </div>
 
         <div
@@ -148,11 +190,7 @@ function WeatherSection({
           }`}
         >
           <div className="overflow-hidden">
-            {selectedCity && (
-              <WeatherDetails
-                weather={selectedCity.weather}
-              />
-            )}
+            {selectedCity && <WeatherDetails weather={selectedCity.weather} />}
           </div>
         </div>
 
@@ -168,6 +206,7 @@ function WeatherSection({
               <HourlyForecast
                 forecast={forecast}
                 onClose={() => setShowHourly(false)}
+                isDark={isDark}
               />
             )}
           </div>

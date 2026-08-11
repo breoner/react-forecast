@@ -95,7 +95,7 @@ function Hero({ onSearch }) {
     setSuggestions([]);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (selectedPlace) {
@@ -103,11 +103,33 @@ function Hero({ onSearch }) {
       return;
     }
 
-    if (suggestions.length > 0) {
-      const place = suggestions[0];
+    if (!city.trim()) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(
+          city,
+        )}&limit=1&appid=${API_KEY}`,
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to find city");
+      }
+
+      const data = await response.json();
+
+      if (data.length === 0) {
+        return;
+      }
+
+      const place = data[0];
 
       handleSelectCity(place);
       onSearch(place);
+    } catch (error) {
+      console.error(error);
     }
   };
 

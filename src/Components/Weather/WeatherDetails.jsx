@@ -44,12 +44,12 @@ function WeatherDetails({ weather }) {
   ];
 
   return (
-    <div className="mx-auto mt-[60px] w-full max-w-[900px] rounded-[20px] bg-[#E4E4E4] p-[30px]">
+    <div className="mx-auto mt-[60px] w-full max-w-[900px] rounded-[20px] bg-[#E4E4E4] p-[30px] text-black transition-colors duration-300 dark:bg-[#242424] dark:text-white">
       <div className="grid grid-cols-1 gap-[20px] sm:grid-cols-2 md:grid-cols-3">
         {details.map((item) => (
           <div
             key={item.title}
-            className="flex min-h-[170px] flex-col items-center justify-center rounded-[10px] bg-[#D9D9D9] px-[15px] py-[20px] text-center"
+            className="flex min-h-[170px] flex-col items-center justify-center rounded-[10px] bg-[#D9D9D9] px-[15px] py-[20px] text-center transition-colors duration-300 dark:bg-[#303030]"
           >
             <p className="text-[14px] font-medium">{item.title}</p>
 

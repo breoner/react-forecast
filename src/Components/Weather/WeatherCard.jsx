@@ -11,9 +11,9 @@ function WeatherCard({
   onToggleFavorite,
   onHourlyForecast,
   onWeeklyForecast,
+  onAssistant,
 }) {
   const iconCode = weather.weather[0].icon;
-
   const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 
   const date = new Date(weather.dt * 1000);
@@ -30,19 +30,19 @@ function WeatherCard({
   });
 
   return (
-    <article className="flex h-[430px] w-[320px] flex-col items-center rounded-[20px] bg-[#E4E4E4] px-[30px] py-[20px]">
+    <article className="flex h-[470px] w-[320px] flex-col items-center rounded-[20px] bg-[#E4E4E4] p-[20px] text-black transition-all duration-300 dark:bg-[#242424] dark:text-white">
       <div className="flex w-full justify-between text-[14px]">
         <span>{city.name}</span>
         <span>{city.country}</span>
       </div>
 
-      <p className="mt-[20px] text-[24px] font-medium">{formattedTime}</p>
+      <p className="mt-[15px] text-[24px] font-medium">{formattedTime}</p>
 
       <div className="mt-[15px] flex gap-[20px]">
         <button
           type="button"
           onClick={onHourlyForecast}
-          className="rounded-[10px] bg-[#FFB36C] px-[18px] py-[8px] text-[10px]"
+          className="rounded-[10px] bg-[#FFB36C] px-[18px] py-[8px] text-[10px] text-black transition-all duration-200 hover:bg-[#FFA95D] active:scale-95"
         >
           Hourly forecast
         </button>
@@ -50,16 +50,41 @@ function WeatherCard({
         <button
           type="button"
           onClick={onWeeklyForecast}
-          className="rounded-[10px] bg-[#FFB36C] px-[18px] py-[8px] text-[10px]"
+          className="rounded-[10px] bg-[#FFB36C] px-[18px] py-[8px] text-[10px] text-black transition-all duration-200 hover:bg-[#FFA95D] active:scale-95"
         >
           Weekly forecast
         </button>
       </div>
 
-      <div className="mt-[15px] flex items-center gap-[12px] text-[14px]">
+      <button
+        type="button"
+        onClick={onAssistant}
+        className="group mt-[10px] flex items-center gap-[7px] rounded-[10px] border border-[#FFB36C] px-[16px] py-[7px] text-[10px] font-medium transition-all duration-200 hover:bg-[#FFB36C] hover:text-black active:scale-95"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          className="h-[15px] w-[15px] transition-transform duration-300 group-hover:rotate-12 group-hover:scale-110"
+        >
+          <path
+            d="M12 3L13.5 8.5L19 10L13.5 11.5L12 17L10.5 11.5L5 10L10.5 8.5L12 3Z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+          />
+
+          <path
+            d="M19 15L19.7 17.3L22 18L19.7 18.7L19 21L18.3 18.7L16 18L18.3 17.3L19 15Z"
+            fill="currentColor"
+          />
+        </svg>
+        Weather Assistant
+      </button>
+
+      <div className="mt-[12px] flex items-center gap-[12px] text-[14px]">
         <span>{formattedDate}</span>
 
-        <span className="h-[20px] w-[1px] bg-black" />
+        <span className="h-[20px] w-[1px] bg-black transition-colors dark:bg-white" />
 
         <span>{formattedDay}</span>
       </div>
@@ -83,20 +108,22 @@ function WeatherCard({
           <img
             src={refreshIcon}
             alt="Refresh"
-            className="transition-transform duration-200 hover:scale-110 active:scale-90"
+            className="h-[30px] w-[30px] transition-all duration-200 hover:scale-110 active:scale-90 dark:invert"
           />
         </button>
 
         <button
           type="button"
           onClick={onToggleFavorite}
-          className="flex h-[30px] w-[30px] items-center justify-center transition-transform duration-200 hover:scale-110 active:scale-90"
+          className={`flex h-[30px] w-[30px] items-center justify-center transition-all duration-200 hover:scale-110 active:scale-90 ${
+            isFavorite ? "text-[#FF9D4D]" : "text-black dark:text-white"
+          }`}
         >
           <svg
             viewBox="0 0 24 24"
-            className="h-[26px] w-[26px] transition-all duration-300 ease-out"
+            className="h-[26px] w-[26px] transition-all duration-300"
             fill={isFavorite ? "#FFB36C" : "transparent"}
-            stroke={isFavorite ? "#FF9D4D" : "black"}
+            stroke="currentColor"
             strokeWidth="1.5"
           >
             <path
@@ -110,7 +137,7 @@ function WeatherCard({
         <button
           type="button"
           onClick={onDetails}
-          className="rounded-[10px] bg-[#FFB36C] px-[24px] py-[8px] text-[10px] transition-all duration-200 hover:scale-[1.04] hover:bg-[#FFA95D] active:scale-95"
+          className="rounded-[10px] bg-[#FFB36C] px-[24px] py-[8px] text-[10px] text-black transition-all duration-200 hover:bg-[#FFA95D] active:scale-95"
         >
           See more
         </button>
@@ -120,7 +147,11 @@ function WeatherCard({
           onClick={onDelete}
           className="flex h-[30px] w-[30px] items-center justify-center"
         >
-          <img src={deleteIcon} alt="Delete" className="h-[30px] w-[30px]" />
+          <img
+            src={deleteIcon}
+            alt="Delete"
+            className="h-[30px] w-[30px] transition-all duration-200 hover:scale-110 active:scale-90 dark:invert"
+          />
         </button>
       </div>
     </article>

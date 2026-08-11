@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import Header from "./Components/Header/Header";
 import Hero from "./Components/Hero/Hero";
 import WeatherSection from "./Components/Weather/WeatherSection";
+import NewsSection from "./Components/News/NewsSection";
+import NatureSection from "./Components/Nature/NatureSection";
+import Footer from "./Components/Footer/Footer";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -11,11 +14,32 @@ function App() {
 
     return savedCities ? JSON.parse(savedCities) : [];
   });
+
   const [error, setError] = useState("");
+
+  const [isDark, setIsDark] = useState(() => {
+    return localStorage.getItem("theme") === "dark";
+  });
 
   useEffect(() => {
     localStorage.setItem("cities", JSON.stringify(cities));
   }, [cities]);
+
+  useEffect(() => {
+    const root = document.documentElement;
+
+    if (isDark) {
+      root.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      root.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [isDark]);
+
+  const handleToggleTheme = () => {
+    setIsDark((currentTheme) => !currentTheme);
+  };
 
   const handleSearch = async (place) => {
     try {
@@ -105,8 +129,8 @@ function App() {
   };
 
   return (
-    <>
-      <Header />
+    <div className="min-h-screen bg-white text-black transition-colors duration-300 dark:bg-[#121212] dark:text-white">
+      <Header isDark={isDark} onToggleTheme={handleToggleTheme} />
 
       <Hero onSearch={handleSearch} />
 
@@ -121,8 +145,15 @@ function App() {
         onDelete={handleDeleteCity}
         onRefresh={handleRefreshCity}
         onToggleFavorite={handleToggleFavorite}
+        isDark={isDark}
       />
-    </>
+
+      <NewsSection />
+
+      <NatureSection />
+
+      <Footer isDark={isDark} />
+    </div>
   );
 }
 
