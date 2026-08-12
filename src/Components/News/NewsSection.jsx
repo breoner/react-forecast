@@ -36,7 +36,7 @@ function NewsSection() {
   }, []);
 
   return (
-    <section className="py-[45px] md:py-[60px]">
+    <section id="news" className="scroll-mt-[80px] py-[60px]">
       <div className="mx-auto w-full max-w-[1160px] px-[16px] md:px-[24px] xl:px-[10px]">
         <h2 className="text-center text-[20px] font-semibold md:text-[24px]">
           Technology news

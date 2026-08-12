@@ -142,7 +142,10 @@ function WeatherSection({
   );
 
   return (
-    <section className="bg-white py-[40px] text-black transition-colors duration-300 dark:bg-[#121212] dark:text-white md:py-[60px]">
+    <section
+      id="weather"
+      className="scroll-mt-[80px] bg-white py-[60px] text-black transition-colors duration-300 dark:bg-[#121212] dark:text-white"
+    >
       <div className="mx-auto w-full max-w-[1160px] px-[16px] md:px-[24px] xl:px-[10px]">
         <div className="flex flex-wrap justify-center gap-[25px] md:gap-[40px]">
           {sortedCities.map((city) => (

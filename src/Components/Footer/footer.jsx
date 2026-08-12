@@ -5,67 +5,63 @@ function Footer({ isDark }) {
 
   return (
     <footer
-      className={`py-[35px] transition-colors duration-300 md:py-[40px] ${
+      className={`py-[40px] transition-colors duration-300 ${
         isDark ? "bg-[#1C1C1C] text-white" : "bg-[#E4E4E4] text-black"
       }`}
     >
-      <div className="mx-auto flex w-full max-w-[1160px] flex-col gap-[30px] px-[16px] sm:grid sm:grid-cols-2 md:flex md:flex-row md:items-start md:justify-between md:px-[24px] xl:px-[10px]">
-        <div className="sm:col-span-2 md:col-span-1">
+      <div className="mx-auto flex w-full max-w-[1160px] flex-col gap-[30px] px-[16px] md:flex-row md:items-start md:justify-between md:px-[24px] xl:px-[10px]">
+        <div>
           <img
             src={logo}
             alt="Logo"
-            className={`h-[38px] w-auto transition-all duration-300 md:h-[45px] ${
+            className={`h-[45px] w-auto transition-all duration-300 ${
               isDark ? "invert opacity-90" : ""
             }`}
           />
 
           <p
-            className={`mt-[15px] max-w-[260px] text-[11px] leading-[1.6] transition-colors duration-300 md:text-[12px] ${secondaryText}`}
+            className={`mt-[15px] max-w-[260px] text-[12px] transition-colors duration-300 ${secondaryText}`}
           >
             Weather, technology news and beautiful nature in one place.
           </p>
         </div>
 
         <div>
-          <h3 className="text-[13px] font-semibold md:text-[14px]">
-            Navigation
-          </h3>
+          <h3 className="text-[14px] font-semibold">Navigation</h3>
 
-          <nav className="mt-[15px] flex flex-col gap-[10px] text-[11px] md:text-[12px]">
+          <nav className="mt-[15px] flex flex-col gap-[10px] text-[12px]">
             <a
-              href="#"
+              href="#weather"
               className="transition-colors duration-200 hover:text-[#FF9D4D]"
             >
-              Who we are
+              Weather
             </a>
 
             <a
-              href="#"
+              href="#news"
               className="transition-colors duration-200 hover:text-[#FF9D4D]"
             >
-              Contacts
+              News
             </a>
 
             <a
-              href="#"
+              href="#nature"
               className="transition-colors duration-200 hover:text-[#FF9D4D]"
             >
-              Menu
+              Nature
             </a>
           </nav>
         </div>
 
         <div>
-          <h3 className="text-[13px] font-semibold md:text-[14px]">
-            Contact us
-          </h3>
+          <h3 className="text-[14px] font-semibold">Contact us</h3>
 
           <div
-            className={`mt-[15px] flex flex-col gap-[10px] text-[11px] transition-colors duration-300 md:text-[12px] ${secondaryText}`}
+            className={`mt-[15px] flex flex-col gap-[10px] text-[12px] transition-colors duration-300 ${secondaryText}`}
           >
             <a
               href="mailto:weather@example.com"
-              className="break-all transition-colors duration-200 hover:text-[#FF9D4D]"
+              className="transition-colors duration-200 hover:text-[#FF9D4D]"
             >
               weather@example.com
             </a>
@@ -86,7 +82,7 @@ function Footer({ isDark }) {
         }`}
       >
         <p
-          className={`text-center text-[9px] transition-colors duration-300 md:text-[10px] ${
+          className={`text-center text-[10px] transition-colors duration-300 ${
             isDark ? "text-[#A8A8A8]" : "text-[#777777]"
           }`}
         >

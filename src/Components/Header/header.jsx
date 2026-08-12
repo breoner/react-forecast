@@ -33,66 +33,82 @@ function Header({ isDark, onToggleTheme }) {
   return (
     <>
       <header className="relative z-40 bg-white text-black transition-colors duration-300 dark:bg-[#171717] dark:text-white">
-        <div className="mx-auto flex h-[60px] w-full max-w-[1160px] items-center justify-between px-[16px] md:h-[70px] md:px-[24px] xl:h-[80px] xl:px-[10px]">
-          <img
-            src={logo}
-            alt="Logo"
-            className={`h-[32px] w-auto transition-all duration-300 md:h-[38px] xl:h-[45px] ${
-              isDark ? "invert opacity-90" : ""
-            }`}
-          />
-
-          <nav className="hidden items-center font-medium md:flex md:gap-[30px] md:text-[10px] xl:gap-[42px] xl:text-[12px]">
-            <a
-              href="#"
-              className="transition-colors duration-200 hover:text-[#FF9D4D]"
-            >
-              Who we are
-            </a>
-
-            <a
-              href="#"
-              className="transition-colors duration-200 hover:text-[#FF9D4D]"
-            >
-              Contacts
-            </a>
-
-            <a
-              href="#"
-              className="transition-colors duration-200 hover:text-[#FF9D4D]"
-            >
-              Menu
-            </a>
-          </nav>
-
-          <div className="hidden items-center gap-[15px] md:flex">
-            <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
-
-            <DesktopUser
-              user={user}
-              userIcon={userIcon}
-              isProfileOpen={isProfileOpen}
-              setIsProfileOpen={setIsProfileOpen}
-              onSignUp={() => setIsSignUpOpen(true)}
-              onLogout={handleLogout}
+        <div className="mx-auto h-[60px] w-full max-w-[1160px] px-[16px] md:h-[70px] md:px-[24px] xl:h-[80px] xl:px-[10px]">
+          {/* MOBILE */}
+          <div className="flex h-full items-center justify-between md:hidden">
+            <img
+              src={logo}
+              alt="Logo"
+              className={`h-[32px] w-auto transition-all duration-300 ${
+                isDark ? "invert opacity-90" : ""
+              }`}
             />
+
+            <div className="flex items-center gap-[10px]">
+              <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
+
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen((current) => !current)}
+                className="flex items-center gap-[7px] text-[11px] font-medium"
+              >
+                Menu
+                <span
+                  className={`h-[7px] w-[7px] border-b border-r border-current transition-transform duration-200 ${
+                    isMenuOpen ? "rotate-[225deg]" : "rotate-45"
+                  }`}
+                />
+              </button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-[10px] md:hidden">
-            <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
-
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen((current) => !current)}
-              className="flex items-center gap-[7px] text-[11px] font-medium"
-            >
-              Menu
-              <span
-                className={`h-[7px] w-[7px] border-b border-r border-current transition-transform duration-200 ${
-                  isMenuOpen ? "rotate-[225deg]" : "rotate-45"
+          {/* TABLET + DESKTOP */}
+          <div className="hidden h-full grid-cols-[1fr_auto_1fr] items-center md:grid">
+            <div className="flex justify-start">
+              <img
+                src={logo}
+                alt="Logo"
+                className={`h-[38px] w-auto transition-all duration-300 xl:h-[45px] ${
+                  isDark ? "invert opacity-90" : ""
                 }`}
               />
-            </button>
+            </div>
+
+            <nav className="flex items-center gap-[30px] text-[10px] font-medium xl:gap-[42px] xl:text-[12px]">
+              <a
+                href="#weather"
+                className="transition-colors duration-200 hover:text-[#FF9D4D]"
+              >
+                Weather
+              </a>
+
+              <a
+                href="#news"
+                className="transition-colors duration-200 hover:text-[#FF9D4D]"
+              >
+                News
+              </a>
+
+              <a
+                href="#nature"
+                className="transition-colors duration-200 hover:text-[#FF9D4D]"
+              >
+                Nature
+              </a>
+            </nav>
+
+            <div className="flex items-center justify-end gap-[15px]">
+              <ThemeToggle isDark={isDark} onToggle={onToggleTheme} />
+
+              <DesktopUser
+                user={user}
+                userIcon={userIcon}
+                isProfileOpen={isProfileOpen}
+                setIsProfileOpen={setIsProfileOpen}
+                onSignUp={() => setIsSignUpOpen(true)}
+                onLogout={handleLogout}
+              />
+            </div>
           </div>
         </div>
 
