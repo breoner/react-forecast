@@ -1,10 +1,17 @@
-function WeeklyForecast({ forecast, onClose }) {
+import { translations } from "../../data/translations";
+
+function WeeklyForecast({ forecast, onClose, language }) {
   if (!forecast) {
     return null;
   }
 
+  const t = translations[language];
+
+  const locale = language === "ua" ? "uk-UA" : "en-US";
+
   const groupedDays = forecast.list.reduce((acc, item) => {
     const date = new Date(item.dt * 1000);
+
     const key = date.toLocaleDateString("en-CA");
 
     if (!acc[key]) {
@@ -21,31 +28,34 @@ function WeeklyForecast({ forecast, onClose }) {
 
     return {
       dt: middleItem.dt,
+
       min: Math.min(...items.map((item) => item.main.temp_min)),
+
       max: Math.max(...items.map((item) => item.main.temp_max)),
+
       icon: middleItem.weather[0].icon,
+
       description: middleItem.weather[0].description,
     };
   });
 
   return (
-    <div className="relative mx-auto mt-[40px] w-full max-w-[900px] rounded-[20px] bg-[#E4E4E4] p-[30px] text-black transition-colors duration-300 dark:bg-[#242424] dark:text-white">
+    <div className="relative mx-auto mt-[40px] w-full max-w-[900px] rounded-[20px] bg-[#E4E4E4] p-[30px] text-black dark:bg-[#242424] dark:text-white">
       <button
         type="button"
         onClick={onClose}
-        aria-label="Close weekly forecast"
-        className="absolute right-[18px] top-[14px] flex h-[30px] w-[30px] items-center justify-center rounded-full text-[26px] leading-none transition-all duration-200 hover:rotate-90 hover:bg-[#D0D0D0] dark:hover:bg-[#3A3A3A]"
+        className="absolute right-[18px] top-[14px] text-[26px]"
       >
         ×
       </button>
 
-      <h2 className="mb-[20px] text-[14px] font-medium">5-day forecast</h2>
+      <h2 className="mb-[20px] text-[14px] font-medium">{t.weather.fiveDay}</h2>
 
       <div className="flex flex-col gap-[8px]">
         {days.map((day) => {
           const date = new Date(day.dt * 1000);
 
-          const formattedDate = date.toLocaleDateString("en-US", {
+          const formattedDate = date.toLocaleDateString(locale, {
             weekday: "short",
             month: "short",
             day: "numeric",
@@ -56,7 +66,7 @@ function WeeklyForecast({ forecast, onClose }) {
           return (
             <div
               key={day.dt}
-              className="grid grid-cols-1 gap-[8px] rounded-[8px] bg-[#D9D9D9] px-[20px] py-[8px] transition-all duration-200 hover:translate-x-[3px] hover:bg-[#D3D3D3] dark:bg-[#303030] dark:hover:bg-[#383838] sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-0"
+              className="grid grid-cols-1 gap-[8px] rounded-[8px] bg-[#D9D9D9] px-[20px] py-[8px] dark:bg-[#303030] sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-0"
             >
               <p className="text-[12px]">{formattedDate}</p>
 
@@ -69,7 +79,8 @@ function WeeklyForecast({ forecast, onClose }) {
 
                 <p className="text-[12px]">
                   {Math.round(day.max)}°/
-                  {Math.round(day.min)}°C
+                  {Math.round(day.min)}
+                  °C
                 </p>
               </div>
 

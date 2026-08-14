@@ -1,28 +1,37 @@
 import { useEffect, useState } from "react";
 import searchIcon from "../../assets/search.svg";
 import heroBg from "../../assets/hero-bg.png";
+import { translations } from "../../data/translations";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
-function Hero({ onSearch }) {
+function Hero({ onSearch, language }) {
   const [city, setCity] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [selectedPlace, setSelectedPlace] = useState(null);
 
+  const t = translations[language];
+
   const now = new Date();
 
-  const monthYear = now.toLocaleDateString("en-US", {
+  const locale = language === "ua" ? "uk-UA" : "en-US";
+
+  const monthYear = now.toLocaleDateString(locale, {
     month: "long",
     year: "numeric",
   });
 
-  const weekDay = now.toLocaleDateString("en-US", {
+  const weekDay = now.toLocaleDateString(locale, {
     weekday: "long",
   });
 
   const day = now.getDate();
 
   const getDaySuffix = (dayNumber) => {
+    if (language === "ua") {
+      return "";
+    }
+
     if (dayNumber >= 11 && dayNumber <= 13) {
       return "th";
     }
@@ -39,7 +48,10 @@ function Hero({ onSearch }) {
     }
   };
 
-  const formattedDay = `${weekDay}, ${day}${getDaySuffix(day)}`;
+  const formattedDay =
+    language === "ua"
+      ? `${weekDay}, ${day}`
+      : `${weekDay}, ${day}${getDaySuffix(day)}`;
 
   useEffect(() => {
     if (city.trim().length < 2 || selectedPlace) {
@@ -144,13 +156,12 @@ function Hero({ onSearch }) {
 
       <div className="relative z-10 mx-auto flex h-full w-full max-w-[1160px] flex-col items-center px-[16px] md:px-[24px] xl:px-[10px]">
         <h1 className="pt-[55px] text-center text-[22px] font-semibold md:pt-[50px] md:text-[26px] xl:pt-[105px] xl:text-[40px]">
-          Weather dashboard
+          {t.hero.title}
         </h1>
 
         <div className="mt-[45px] flex w-full max-w-[500px] items-center justify-center md:mt-[50px] xl:mt-[80px] xl:max-w-none">
           <p className="w-[46%] text-right text-[11px] font-medium leading-[1.5] sm:text-[12px] md:w-[220px] md:text-[14px] xl:w-[345px] xl:text-[24px]">
-            Create your personal list of favorite cities and always be aware of
-            the weather.
+            {t.hero.description}
           </p>
 
           <div className="mx-[16px] h-[95px] w-[2px] shrink-0 bg-white sm:mx-[22px] md:mx-[38px] md:h-[110px] xl:mx-[50px] xl:h-[144px] xl:w-[3px]" />
@@ -169,7 +180,7 @@ function Hero({ onSearch }) {
           >
             <input
               type="text"
-              placeholder="Search location..."
+              placeholder={t.hero.search}
               value={city}
               onChange={handleChange}
               className="h-full min-w-0 flex-1 rounded-l-[8px] bg-[#D9D9D9] px-[14px] text-[11px] font-medium text-black outline-none placeholder:text-[#555555] md:rounded-l-[10px] md:px-[20px] md:text-[12px] xl:px-[30px] xl:text-[14px]"
@@ -177,8 +188,8 @@ function Hero({ onSearch }) {
 
             <button
               type="submit"
-              aria-label="Search city"
-              className="flex h-full w-[42px] shrink-0 items-center justify-center rounded-r-[8px] border-l-2 border-black bg-[#FFB36C] transition-colors duration-200 hover:bg-[#FFA95D] md:w-[42px] md:rounded-r-[10px] xl:w-[45px]"
+              aria-label={t.hero.searchButton}
+              className="flex h-full w-[42px] shrink-0 items-center justify-center rounded-r-[8px] border-l-2 border-black bg-[#FFB36C] transition-colors duration-200 hover:bg-[#FFA95D] md:rounded-r-[10px] xl:w-[45px]"
             >
               <img
                 src={searchIcon}

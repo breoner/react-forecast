@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import NatureSlider from "./NatureSlider";
+import { translations } from "../../data/translations";
 
 const API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
 
-function NatureSection() {
+function NatureSection({ language }) {
   const [images, setImages] = useState([]);
+
+  const t = translations[language];
 
   useEffect(() => {
     const getImages = async () => {
@@ -33,7 +36,7 @@ function NatureSection() {
     <section id="nature" className="scroll-mt-[80px] py-[60px]">
       <div className="mx-auto w-full max-w-[1160px] px-[16px] md:px-[24px] xl:px-[10px]">
         <h2 className="text-center text-[20px] font-semibold md:text-[24px]">
-          Beautiful nature
+          {t.nature.title}
         </h2>
 
         <NatureSlider images={images} />

@@ -13,6 +13,7 @@ function WeatherSection({
   onRefresh,
   onToggleFavorite,
   isDark,
+  language,
 }) {
   const [selectedCityId, setSelectedCityId] = useState(null);
 
@@ -23,6 +24,7 @@ function WeatherSection({
   const [forecast, setForecast] = useState(null);
 
   const [showHourly, setShowHourly] = useState(false);
+
   const [showWeekly, setShowWeekly] = useState(false);
 
   const [assistantCityId, setAssistantCityId] = useState(null);
@@ -57,8 +59,10 @@ function WeatherSection({
       return forecast;
     }
 
+    const apiLanguage = language === "ua" ? "uk" : "en";
+
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?lat=${city.place.lat}&lon=${city.place.lon}&appid=${API_KEY}&units=metric`,
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${city.place.lat}&lon=${city.place.lon}&appid=${API_KEY}&units=metric&lang=${apiLanguage}`,
     );
 
     if (!response.ok) {
@@ -161,6 +165,7 @@ function WeatherSection({
               onHourlyForecast={() => handleHourlyForecast(city)}
               onWeeklyForecast={() => handleWeeklyForecast(city)}
               onAssistant={() => handleAssistant(city.id)}
+              language={language}
             />
           ))}
         </div>
@@ -176,6 +181,7 @@ function WeatherSection({
             {assistantCity && (
               <WeatherAssistant
                 weather={assistantCity.weather}
+                language={language}
                 onClose={() => {
                   setAssistantCityId(null);
 
@@ -196,7 +202,12 @@ function WeatherSection({
           }`}
         >
           <div className="overflow-hidden">
-            {selectedCity && <WeatherDetails weather={selectedCity.weather} />}
+            {selectedCity && (
+              <WeatherDetails
+                weather={selectedCity.weather}
+                language={language}
+              />
+            )}
           </div>
         </div>
 
@@ -213,6 +224,7 @@ function WeatherSection({
                 forecast={forecast}
                 onClose={() => setShowHourly(false)}
                 isDark={isDark}
+                language={language}
               />
             )}
           </div>
@@ -230,6 +242,7 @@ function WeatherSection({
               <WeeklyForecast
                 forecast={forecast}
                 onClose={() => setShowWeekly(false)}
+                language={language}
               />
             )}
           </div>

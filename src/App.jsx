@@ -21,6 +21,10 @@ function App() {
     return localStorage.getItem("theme") === "dark";
   });
 
+  const [language, setLanguage] = useState(() => {
+    return localStorage.getItem("language") || "en";
+  });
+
   useEffect(() => {
     localStorage.setItem("cities", JSON.stringify(cities));
   }, [cities]);
@@ -37,8 +41,21 @@ function App() {
     }
   }, [isDark]);
 
+  useEffect(() => {
+    localStorage.setItem("language", language);
+
+    document.documentElement.lang =
+      language === "ua" ? "uk" : "en";
+  }, [language]);
+
   const handleToggleTheme = () => {
     setIsDark((currentTheme) => !currentTheme);
+  };
+
+  const handleToggleLanguage = () => {
+    setLanguage((currentLanguage) =>
+      currentLanguage === "en" ? "ua" : "en",
+    );
   };
 
   const handleSearch = async (place) => {
@@ -46,20 +63,34 @@ function App() {
       setError("");
 
       const isAlreadyAdded = cities.some(
-        (city) => city.place.lat === place.lat && city.place.lon === place.lon,
+        (city) =>
+          city.place.lat === place.lat &&
+          city.place.lon === place.lon,
       );
 
       if (isAlreadyAdded) {
-        setError("This city is already added");
+        setError(
+          language === "ua"
+            ? "Це місто вже додано"
+            : "This city is already added",
+        );
+
         return;
       }
 
+      const apiLanguage =
+        language === "ua" ? "uk" : "en";
+
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${place.lat}&lon=${place.lon}&appid=${API_KEY}&units=metric`,
+        `https://api.openweathermap.org/data/2.5/weather?lat=${place.lat}&lon=${place.lon}&appid=${API_KEY}&units=metric&lang=${apiLanguage}`,
       );
 
       if (!response.ok) {
-        throw new Error("Weather not found");
+        throw new Error(
+          language === "ua"
+            ? "Погоду не знайдено"
+            : "Weather not found",
+        );
       }
 
       const weather = await response.json();
@@ -68,16 +99,22 @@ function App() {
         id: `${place.lat}-${place.lon}`,
         place,
         weather,
+        isFavorite: false,
       };
 
-      setCities((prevCities) => [...prevCities, newCity]);
+      setCities((prevCities) => [
+        ...prevCities,
+        newCity,
+      ]);
     } catch (error) {
       setError(error.message);
     }
   };
 
   const handleDeleteCity = (id) => {
-    setCities((prevCities) => prevCities.filter((city) => city.id !== id));
+    setCities((prevCities) =>
+      prevCities.filter((city) => city.id !== id),
+    );
   };
 
   const handleToggleFavorite = (id) => {
@@ -103,12 +140,19 @@ function App() {
     try {
       setError("");
 
+      const apiLanguage =
+        language === "ua" ? "uk" : "en";
+
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${city.place.lat}&lon=${city.place.lon}&appid=${API_KEY}&units=metric`,
+        `https://api.openweathermap.org/data/2.5/weather?lat=${city.place.lat}&lon=${city.place.lon}&appid=${API_KEY}&units=metric&lang=${apiLanguage}`,
       );
 
       if (!response.ok) {
-        throw new Error("Failed to refresh weather");
+        throw new Error(
+          language === "ua"
+            ? "Не вдалося оновити погоду"
+            : "Failed to refresh weather",
+        );
       }
 
       const weather = await response.json();
@@ -130,9 +174,17 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white text-black transition-colors duration-300 dark:bg-[#121212] dark:text-white">
-      <Header isDark={isDark} onToggleTheme={handleToggleTheme} />
+      <Header
+        isDark={isDark}
+        onToggleTheme={handleToggleTheme}
+        language={language}
+        onToggleLanguage={handleToggleLanguage}
+      />
 
-      <Hero onSearch={handleSearch} />
+      <Hero
+        onSearch={handleSearch}
+        language={language}
+      />
 
       {error && (
         <p className="mt-[20px] text-center text-[14px] text-red-500">
@@ -146,13 +198,17 @@ function App() {
         onRefresh={handleRefreshCity}
         onToggleFavorite={handleToggleFavorite}
         isDark={isDark}
+        language={language}
       />
 
-      <NewsSection />
+      <NewsSection language={language} />
 
-      <NatureSection />
+      <NatureSection language={language} />
 
-      <Footer isDark={isDark} />
+      <Footer
+        isDark={isDark}
+        language={language}
+      />
     </div>
   );
 }

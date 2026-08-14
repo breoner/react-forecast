@@ -1,6 +1,9 @@
-function WeatherAssistant({ weather, onClose }) {
+import { translations } from "../../data/translations";
+
+function WeatherAssistant({ weather, onClose, language }) {
+  const t = translations[language];
+
   const temp = weather.main.temp;
-  const humidity = weather.main.humidity;
   const wind = weather.wind.speed;
   const condition = weather.weather[0].main;
 
@@ -8,15 +11,16 @@ function WeatherAssistant({ weather, onClose }) {
 
   let clothes = "";
   let umbrella = "";
-  let comfortScore = 10;
+  let outdoor = "";
   let driving = "";
+  let comfortScore = 10;
 
   if (temp < 5) {
-    clothes = "Wear a warm jacket";
+    clothes = t.assistant.warmJacket;
   } else if (temp < 15) {
-    clothes = "Wear a light jacket";
+    clothes = t.assistant.lightJacket;
   } else {
-    clothes = "Light clothes are enough";
+    clothes = t.assistant.lightClothes;
   }
 
   if (
@@ -24,34 +28,34 @@ function WeatherAssistant({ weather, onClose }) {
     condition === "Drizzle" ||
     condition === "Thunderstorm"
   ) {
-    umbrella = "Take an umbrella";
+    umbrella = t.assistant.takeUmbrella;
   } else {
-    umbrella = "No umbrella needed";
+    umbrella = t.assistant.noUmbrella;
   }
 
-  let outdoor = "";
-
   if (condition === "Rain" || condition === "Thunderstorm") {
-    outdoor = "Better stay inside";
+    outdoor = t.assistant.stayInside;
   } else if (temp >= 15 && temp <= 28 && wind < 8) {
-    outdoor = "Great for outdoor activities";
+    outdoor = t.assistant.greatOutdoor;
   } else {
-    outdoor = "Outdoor activities are okay";
+    outdoor = t.assistant.okayOutdoor;
   }
 
   if (wind >= 10) {
-    warnings.push("Strong wind");
+    warnings.push(t.assistant.strongWind);
+
+    comfortScore -= 2;
   }
 
   if (temp > 30) {
-    warnings.push("High temperature");
+    warnings.push(t.assistant.highTemperature);
+
+    comfortScore -= 2;
   }
 
   if (temp < 0) {
-    warnings.push("Freezing temperature");
-  }
+    warnings.push(t.assistant.freezingTemperature);
 
-  if (wind >= 10) {
     comfortScore -= 2;
   }
 
@@ -63,122 +67,84 @@ function WeatherAssistant({ weather, onClose }) {
     comfortScore -= 3;
   }
 
-  if (temp > 30) {
-    comfortScore -= 2;
-  }
-
-  if (temp < 0) {
-    comfortScore -= 2;
-  }
-
   if (condition === "Thunderstorm" || condition === "Snow") {
-    driving = "Dangerous driving";
+    driving = t.assistant.dangerousDriving;
   } else if (condition === "Rain" || wind >= 10) {
-    driving = "Drive carefully";
+    driving = t.assistant.carefulDriving;
   } else {
-    driving = "Good driving conditions";
+    driving = t.assistant.goodDriving;
   }
 
   comfortScore = Math.max(0, comfortScore);
 
   return (
-  <div className="relative mx-auto mt-[40px] w-full max-w-[900px] rounded-[20px] bg-[#E4E4E4] p-[30px] text-black transition-colors duration-300 dark:bg-[#242424] dark:text-white">
-    <button
-      type="button"
-      onClick={onClose}
-      aria-label="Close weather assistant"
-      className="absolute right-[18px] top-[14px] flex h-[30px] w-[30px] items-center justify-center rounded-full text-[26px] leading-none transition-all duration-200 hover:rotate-90 hover:bg-[#D0D0D0] active:scale-90 dark:hover:bg-[#3A3A3A]"
-    >
-      ×
-    </button>
-    <div className="flex flex-col gap-[8px] sm:flex-row sm:items-center sm:justify-between">
-      <div>
-        <h2 className="text-[20px] font-semibold">
-          Weather Assistant
-        </h2>
+    <div className="relative mx-auto mt-[40px] w-full max-w-[900px] rounded-[20px] bg-[#E4E4E4] p-[30px] text-black dark:bg-[#242424] dark:text-white">
+      <button
+        type="button"
+        onClick={onClose}
+        className="absolute right-[18px] top-[14px] text-[26px]"
+      >
+        ×
+      </button>
 
-        <p className="mt-[5px] text-[12px] text-[#666666] dark:text-[#BDBDBD]">
-          Smart recommendations based on current weather
-        </p>
-      </div>
+      <div className="flex flex-col gap-[8px] sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-[20px] font-semibold">{t.assistant.title}</h2>
 
-      <div className="rounded-[14px] bg-[#FFB36C] px-[18px] py-[10px] text-center text-black">
-        <p className="text-[10px] font-medium">
-          Comfort Score
-        </p>
-
-        <p className="text-[24px] font-semibold">
-          {comfortScore}/10
-        </p>
-      </div>
-    </div>
-
-    <div className="mt-[25px] grid grid-cols-1 gap-[15px] sm:grid-cols-2">
-      <div className="rounded-[15px] bg-[#D9D9D9] p-[18px] transition-colors duration-300 dark:bg-[#303030]">
-        <p className="text-[12px] text-[#666666] dark:text-[#BDBDBD]">
-          Clothes
-        </p>
-
-        <p className="mt-[6px] text-[14px] font-medium">
-          {clothes}
-        </p>
-      </div>
-
-      <div className="rounded-[15px] bg-[#D9D9D9] p-[18px] transition-colors duration-300 dark:bg-[#303030]">
-        <p className="text-[12px] text-[#666666] dark:text-[#BDBDBD]">
-          Umbrella
-        </p>
-
-        <p className="mt-[6px] text-[14px] font-medium">
-          {umbrella}
-        </p>
-      </div>
-
-      <div className="rounded-[15px] bg-[#D9D9D9] p-[18px] transition-colors duration-300 dark:bg-[#303030]">
-        <p className="text-[12px] text-[#666666] dark:text-[#BDBDBD]">
-          Outdoor
-        </p>
-
-        <p className="mt-[6px] text-[14px] font-medium">
-          {outdoor}
-        </p>
-      </div>
-
-      <div className="rounded-[15px] bg-[#D9D9D9] p-[18px] transition-colors duration-300 dark:bg-[#303030]">
-        <p className="text-[12px] text-[#666666] dark:text-[#BDBDBD]">
-          Driving
-        </p>
-
-        <p className="mt-[6px] text-[14px] font-medium">
-          {driving}
-        </p>
-      </div>
-    </div>
-
-    <div className="mt-[15px] rounded-[15px] bg-[#D9D9D9] p-[18px] transition-colors duration-300 dark:bg-[#303030]">
-      <p className="text-[12px] text-[#666666] dark:text-[#BDBDBD]">
-        Warnings
-      </p>
-
-      <div className="mt-[8px] flex flex-wrap gap-[8px]">
-        {warnings.length > 0 ? (
-          warnings.map((warning, index) => (
-            <span
-              key={index}
-              className="rounded-full bg-[#FFB36C] px-[12px] py-[6px] text-[11px] font-medium text-black"
-            >
-              {warning}
-            </span>
-          ))
-        ) : (
-          <p className="text-[14px] font-medium">
-            No warnings
+          <p className="mt-[5px] text-[12px] text-[#666666] dark:text-[#BDBDBD]">
+            {t.assistant.subtitle}
           </p>
-        )}
+        </div>
+
+        <div className="rounded-[14px] bg-[#FFB36C] px-[18px] py-[10px] text-center text-black">
+          <p className="text-[10px] font-medium">{t.assistant.comfort}</p>
+
+          <p className="text-[24px] font-semibold">{comfortScore}/10</p>
+        </div>
+      </div>
+
+      <div className="mt-[25px] grid grid-cols-1 gap-[15px] sm:grid-cols-2">
+        {[
+          [t.assistant.clothes, clothes],
+          [t.assistant.umbrella, umbrella],
+          [t.assistant.outdoor, outdoor],
+          [t.assistant.driving, driving],
+        ].map(([title, value]) => (
+          <div
+            key={title}
+            className="rounded-[15px] bg-[#D9D9D9] p-[18px] dark:bg-[#303030]"
+          >
+            <p className="text-[12px] text-[#666666] dark:text-[#BDBDBD]">
+              {title}
+            </p>
+
+            <p className="mt-[6px] text-[14px] font-medium">{value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-[15px] rounded-[15px] bg-[#D9D9D9] p-[18px] dark:bg-[#303030]">
+        <p className="text-[12px] text-[#666666] dark:text-[#BDBDBD]">
+          {t.assistant.warnings}
+        </p>
+
+        <div className="mt-[8px] flex flex-wrap gap-[8px]">
+          {warnings.length > 0 ? (
+            warnings.map((warning, index) => (
+              <span
+                key={index}
+                className="rounded-full bg-[#FFB36C] px-[12px] py-[6px] text-[11px] font-medium text-black"
+              >
+                {warning}
+              </span>
+            ))
+          ) : (
+            <p className="text-[14px] font-medium">{t.assistant.noWarnings}</p>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 }
 
 export default WeatherAssistant;

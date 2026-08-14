@@ -1,4 +1,8 @@
-function NewsCard({ article }) {
+import { translations } from "../../data/translations";
+
+function NewsCard({ article, language }) {
+  const t = translations[language];
+
   return (
     <article className="mx-auto flex w-full max-w-[420px] flex-col overflow-hidden rounded-[15px] bg-white text-black shadow-md transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg dark:bg-[#242424] dark:text-white xl:max-w-none">
       {article.image_url ? (
@@ -9,7 +13,7 @@ function NewsCard({ article }) {
         />
       ) : (
         <div className="flex h-[190px] items-center justify-center bg-[#E4E4E4] text-[12px] text-[#666666] dark:bg-[#303030] dark:text-[#BDBDBD] md:h-[180px]">
-          No image
+          {t.news.noImage}
         </div>
       )}
 
@@ -24,8 +28,8 @@ function NewsCard({ article }) {
           rel="noreferrer"
           className="mt-auto pt-[15px]"
         >
-          <span className="inline-block rounded-[10px] bg-[#FFB36C] px-[18px] py-[8px] text-[10px] text-black transition-all duration-200 hover:bg-[#FFA95D] active:scale-95">
-            See more
+          <span className="inline-block rounded-[10px] bg-[#FFB36C] px-[18px] py-[8px] text-[10px] text-black">
+            {t.news.seeMore}
           </span>
         </a>
       </div>
