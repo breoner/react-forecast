@@ -84,7 +84,7 @@ function Hero({ onSearch, language }) {
           setSuggestions([]);
         }
       }
-    }, 150);
+    }, 180);
 
     return () => {
       clearTimeout(timer);
@@ -147,75 +147,100 @@ function Hero({ onSearch, language }) {
 
   return (
     <section
-      className="relative h-[520px] bg-cover bg-center font-['Montserrat'] text-white md:h-[595px]"
+      className="relative min-h-[500px] overflow-hidden bg-cover bg-center font-['Montserrat'] text-white md:min-h-[560px]"
       style={{
         backgroundImage: `url(${heroBg})`,
       }}
     >
-      <div className="absolute inset-0 bg-black/48" />
+      <div className="absolute inset-0 bg-black/55" />
 
-      <div className="relative z-10 mx-auto flex h-full w-full max-w-[1160px] flex-col items-center px-[16px] md:px-[24px] xl:px-[10px]">
-        <h1 className="pt-[55px] text-center text-[22px] font-semibold md:pt-[50px] md:text-[26px] xl:pt-[105px] xl:text-[40px]">
-          {t.hero.title}
-        </h1>
+      <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-transparent to-black/25" />
 
-        <div className="mt-[45px] flex w-full max-w-[500px] items-center justify-center md:mt-[50px] xl:mt-[80px] xl:max-w-none">
-          <p className="w-[46%] text-right text-[11px] font-medium leading-[1.5] sm:text-[12px] md:w-[220px] md:text-[14px] xl:w-[345px] xl:text-[24px]">
+      <div className="relative z-10 mx-auto flex min-h-[500px] w-full max-w-[1160px] flex-col items-center px-[16px] pb-[55px] pt-[55px] md:min-h-[560px] md:px-[24px] md:pt-[70px] xl:px-[10px] xl:pt-[85px]">
+        <div className="flex flex-col items-center text-center">
+          <div className="rounded-full border border-white/20 bg-white/10 px-[14px] py-[7px] text-[10px] font-medium backdrop-blur-md md:text-[11px]">
+            {monthYear}
+          </div>
+
+          <h1 className="mt-[18px] max-w-[720px] text-[30px] font-semibold leading-[1.1] tracking-[-0.5px] sm:text-[36px] md:text-[44px] xl:text-[52px]">
+            {t.hero.title}
+          </h1>
+
+          <p className="mt-[16px] max-w-[570px] text-[12px] font-medium leading-[1.7] text-white/80 sm:text-[13px] md:text-[15px]">
             {t.hero.description}
           </p>
 
-          <div className="mx-[16px] h-[95px] w-[2px] shrink-0 bg-white sm:mx-[22px] md:mx-[38px] md:h-[110px] xl:mx-[50px] xl:h-[144px] xl:w-[3px]" />
+          <div className="mt-[18px] flex items-center gap-[10px] text-[11px] text-white/70 md:text-[12px]">
+            <span>{formattedDay}</span>
 
-          <p className="w-[38%] text-left text-[11px] font-medium leading-[1.6] sm:text-[12px] md:w-[145px] md:text-[14px] xl:w-[190px] xl:text-[24px]">
-            {monthYear}
-            <br />
-            {formattedDay}
-          </p>
+            <span className="h-[4px] w-[4px] rounded-full bg-[#FFB36C]" />
+
+            <span>{monthYear}</span>
+          </div>
         </div>
 
-        <div className="relative mt-[55px] w-full max-w-[320px] md:mt-[76px] md:max-w-[402px] xl:mt-[75px] xl:max-w-[625px]">
+        <div className="relative mt-[42px] w-full max-w-[650px] md:mt-[50px]">
           <form
             onSubmit={handleSubmit}
-            className="flex h-[38px] md:h-[36px] xl:h-[42px]"
+            className="flex h-[54px] w-full rounded-[18px] border border-white/20 bg-white/95 p-[6px] shadow-[0_18px_45px_rgba(0,0,0,0.20)] backdrop-blur-xl transition-all duration-300 focus-within:border-[#FFB36C]"
           >
             <input
               type="text"
               placeholder={t.hero.search}
               value={city}
               onChange={handleChange}
-              className="h-full min-w-0 flex-1 rounded-l-[8px] bg-[#D9D9D9] px-[14px] text-[11px] font-medium text-black outline-none placeholder:text-[#555555] md:rounded-l-[10px] md:px-[20px] md:text-[12px] xl:px-[30px] xl:text-[14px]"
+              className="h-full min-w-0 flex-1 bg-transparent px-[16px] text-[12px] font-medium text-black outline-none placeholder:text-[#777777] md:px-[20px] md:text-[14px]"
             />
 
             <button
               type="submit"
               aria-label={t.hero.searchButton}
-              className="flex h-full w-[42px] shrink-0 items-center justify-center rounded-r-[8px] border-l-2 border-black bg-[#FFB36C] transition-colors duration-200 hover:bg-[#FFA95D] md:rounded-r-[10px] xl:w-[45px]"
+              className="flex h-full w-[48px] shrink-0 items-center justify-center rounded-[13px] bg-[#FFB36C] transition-all duration-200 hover:bg-[#FFA95D] active:scale-95"
             >
               <img
                 src={searchIcon}
                 alt=""
-                className="h-[18px] w-[18px] xl:h-[25px] xl:w-[25px]"
+                className="h-[20px] w-[20px] md:h-[22px] md:w-[22px]"
               />
             </button>
           </form>
 
           {suggestions.length > 0 && (
-            <ul className="absolute left-0 top-full z-20 mt-[3px] w-[calc(100%-42px)] overflow-hidden rounded-[8px] bg-white text-black shadow-lg xl:w-[calc(100%-45px)]">
+            <ul className="absolute left-0 top-[calc(100%+8px)] z-30 w-[calc(100%-54px)] overflow-hidden rounded-[14px] border border-[#E5E7EB] bg-white py-[5px] text-black shadow-xl">
               {suggestions.map((place, index) => (
                 <li key={`${place.lat}-${place.lon}-${index}`}>
                   <button
                     type="button"
                     onClick={() => handleSelectCity(place)}
-                    className="w-full px-[14px] py-[9px] text-left text-[11px] transition-colors hover:bg-[#E8E8E8] md:px-[20px] md:text-[12px] xl:text-[14px]"
+                    className="w-full px-[18px] py-[11px] text-left text-[12px] transition-colors duration-200 hover:bg-[#F3F4F6] md:text-[13px]"
                   >
-                    {place.name}
-                    {place.state ? `, ${place.state}` : ""}
-                    {place.country ? `, ${place.country}` : ""}
+                    <span className="font-medium">{place.name}</span>
+
+                    <span className="text-[#777777]">
+                      {place.state ? `, ${place.state}` : ""}
+                      {place.country ? `, ${place.country}` : ""}
+                    </span>
                   </button>
                 </li>
               ))}
             </ul>
           )}
+        </div>
+
+        <div className="mt-auto flex flex-wrap justify-center gap-[10px] pt-[35px]">
+          <div className="rounded-[12px] border border-white/15 bg-white/10 px-[15px] py-[9px] text-[10px] backdrop-blur-md md:text-[11px]">
+            {language === "ua" ? "Швидкий пошук міста" : "Quick city search"}
+          </div>
+
+          <div className="rounded-[12px] border border-white/15 bg-white/10 px-[15px] py-[9px] text-[10px] backdrop-blur-md md:text-[11px]">
+            {language === "ua" ? "Актуальна погода" : "Current weather"}
+          </div>
+
+          <div className="rounded-[12px] border border-white/15 bg-white/10 px-[15px] py-[9px] text-[10px] backdrop-blur-md md:text-[11px]">
+            {language === "ua"
+              ? "Прогноз та рекомендації"
+              : "Forecast & recommendations"}
+          </div>
         </div>
       </div>
     </section>

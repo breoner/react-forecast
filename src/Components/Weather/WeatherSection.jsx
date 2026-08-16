@@ -206,6 +206,13 @@ function WeatherSection({
               <WeatherDetails
                 weather={selectedCity.weather}
                 language={language}
+                onClose={() => {
+                  setSelectedCityId(null);
+
+                  setTimeout(() => {
+                    setDetailsCityId(null);
+                  }, 500);
+                }}
               />
             )}
           </div>
