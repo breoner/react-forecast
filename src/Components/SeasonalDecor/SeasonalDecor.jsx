@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 function SeasonalDecor() {
   const season = useMemo(() => {
@@ -19,14 +19,37 @@ function SeasonalDecor() {
     return "autumn";
   }, []);
 
+  const [isSakura, setIsSakura] = useState(() => {
+    return localStorage.getItem("seasonalDecorStyle") === "sakura";
+  });
+
+  const toggleSakura = () => {
+    setIsSakura((current) => {
+      const next = !current;
+
+      localStorage.setItem("seasonalDecorStyle", next ? "sakura" : "seasonal");
+
+      return next;
+    });
+  };
+
   return (
     <div
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-[30] overflow-hidden"
     >
-      {season === "spring" && <SpringDecor />}
-      {season === "summer" && <SummerDecor />}
-      {season === "autumn" && <AutumnDecor />}
+      {season === "spring" && (
+        <SpringDecor isSakura={isSakura} onToggleSakura={toggleSakura} />
+      )}
+
+      {season === "summer" && (
+        <SummerDecor isSakura={isSakura} onToggleSakura={toggleSakura} />
+      )}
+
+      {season === "autumn" && (
+        <AutumnDecor isSakura={isSakura} onToggleSakura={toggleSakura} />
+      )}
+
       {season === "winter" && <WinterDecor />}
     </div>
   );
@@ -36,223 +59,188 @@ function SeasonalDecor() {
    SPRING
 ======================================== */
 
-function SpringDecor() {
-  const petals = [
-    {
-      left: "5%",
-      size: 10,
-      duration: "19s",
-      delay: "-4s",
-      animation: "season-fall-right",
-    },
-    {
-      left: "15%",
-      size: 8,
-      duration: "24s",
-      delay: "-15s",
-      animation: "season-fall-left",
-    },
-    {
-      left: "34%",
-      size: 7,
-      duration: "28s",
-      delay: "-9s",
-      animation: "season-fall-right",
-    },
-    {
-      left: "65%",
-      size: 8,
-      duration: "25s",
-      delay: "-18s",
-      animation: "season-fall-left",
-    },
-    {
-      left: "82%",
-      size: 10,
-      duration: "22s",
-      delay: "-7s",
-      animation: "season-fall-right",
-    },
-    {
-      left: "95%",
-      size: 8,
-      duration: "27s",
-      delay: "-20s",
-      animation: "season-fall-left",
-    },
-  ];
-
+function SpringDecor({ isSakura, onToggleSakura }) {
   return (
     <>
-      <Branch side="left" tone="spring" />
-      <Branch side="right" tone="spring" />
+      <Branch
+        side="left"
+        tone="spring"
+        isSakura={isSakura}
+        onClick={onToggleSakura}
+      />
 
-      {petals.map((petal, index) => (
-        <span
-          key={index}
-          className={`season-particle ${petal.animation} absolute top-[-50px] rounded-[70%_30%_70%_30%] bg-[#F0B9D0]/70 shadow-[0_2px_6px_rgba(0,0,0,0.08)]`}
-          style={{
-            left: petal.left,
-            width: `${petal.size}px`,
-            height: `${petal.size * 1.4}px`,
-            animationDuration: petal.duration,
-            animationDelay: petal.delay,
-          }}
-        />
-      ))}
+      <Branch
+        side="right"
+        tone="spring"
+        isSakura={isSakura}
+        onClick={onToggleSakura}
+      />
+
+      {isSakura ? <SakuraParticles /> : <SpringParticles />}
     </>
   );
+}
+
+function SpringParticles() {
+  const petals = [
+    ["5%", 10, "19s", "-4s", "season-fall-right"],
+    ["15%", 8, "24s", "-15s", "season-fall-left"],
+    ["34%", 7, "28s", "-9s", "season-fall-right"],
+    ["65%", 8, "25s", "-18s", "season-fall-left"],
+    ["82%", 10, "22s", "-7s", "season-fall-right"],
+    ["95%", 8, "27s", "-20s", "season-fall-left"],
+  ];
+
+  return petals.map(([left, size, duration, delay, animation], index) => (
+    <span
+      key={index}
+      className={`season-particle ${animation} absolute top-[-50px] rounded-[70%_30%_70%_30%] bg-[#F0B9D0]/70`}
+      style={{
+        left,
+        width: `${size}px`,
+        height: `${size * 1.4}px`,
+        animationDuration: duration,
+        animationDelay: delay,
+      }}
+    />
+  ));
 }
 
 /* ========================================
    SUMMER
 ======================================== */
 
-function SummerDecor() {
-  const leaves = [
-    {
-      left: "4%",
-      size: 11,
-      duration: "21s",
-      delay: "-5s",
-      animation: "season-fall-right",
-    },
-    {
-      left: "14%",
-      size: 8,
-      duration: "27s",
-      delay: "-16s",
-      animation: "season-fall-left",
-    },
-    {
-      left: "32%",
-      size: 7,
-      duration: "30s",
-      delay: "-10s",
-      animation: "season-fall-right",
-    },
-    {
-      left: "68%",
-      size: 7,
-      duration: "29s",
-      delay: "-20s",
-      animation: "season-fall-left",
-    },
-    {
-      left: "84%",
-      size: 10,
-      duration: "24s",
-      delay: "-8s",
-      animation: "season-fall-right",
-    },
-    {
-      left: "96%",
-      size: 8,
-      duration: "28s",
-      delay: "-22s",
-      animation: "season-fall-left",
-    },
-  ];
-
+function SummerDecor({ isSakura, onToggleSakura }) {
   return (
     <>
-      <Branch side="left" tone="summer" />
-      <Branch side="right" tone="summer" />
+      <Branch
+        side="left"
+        tone="summer"
+        isSakura={isSakura}
+        onClick={onToggleSakura}
+      />
 
-      {leaves.map((leaf, index) => (
-        <span
-          key={index}
-          className={`season-particle ${leaf.animation} absolute top-[-50px] rounded-[85%_15%_85%_15%] bg-[#668F58]/65 shadow-[0_2px_6px_rgba(0,0,0,0.10)] dark:bg-[#8BAD7D]/65`}
-          style={{
-            left: leaf.left,
-            width: `${leaf.size}px`,
-            height: `${leaf.size * 1.65}px`,
-            animationDuration: leaf.duration,
-            animationDelay: leaf.delay,
-          }}
-        />
-      ))}
+      <Branch
+        side="right"
+        tone="summer"
+        isSakura={isSakura}
+        onClick={onToggleSakura}
+      />
+
+      {isSakura ? <SakuraParticles /> : <SummerParticles />}
     </>
   );
+}
+
+function SummerParticles() {
+  const leaves = [
+    ["4%", 11, "21s", "-5s", "season-fall-right"],
+    ["14%", 8, "27s", "-16s", "season-fall-left"],
+    ["32%", 7, "30s", "-10s", "season-fall-right"],
+    ["68%", 7, "29s", "-20s", "season-fall-left"],
+    ["84%", 10, "24s", "-8s", "season-fall-right"],
+    ["96%", 8, "28s", "-22s", "season-fall-left"],
+  ];
+
+  return leaves.map(([left, size, duration, delay, animation], index) => (
+    <span
+      key={index}
+      className={`season-particle ${animation} absolute top-[-50px] rounded-[85%_15%_85%_15%] bg-[#668F58]/65 shadow-[0_2px_6px_rgba(0,0,0,0.10)] dark:bg-[#8BAD7D]/65`}
+      style={{
+        left,
+        width: `${size}px`,
+        height: `${size * 1.65}px`,
+        animationDuration: duration,
+        animationDelay: delay,
+      }}
+    />
+  ));
 }
 
 /* ========================================
    AUTUMN
 ======================================== */
 
-function AutumnDecor() {
-  const leaves = [
-    {
-      left: "4%",
-      size: 11,
-      duration: "19s",
-      delay: "-4s",
-      color: "#D98A3A",
-      animation: "season-fall-right",
-    },
-    {
-      left: "16%",
-      size: 9,
-      duration: "25s",
-      delay: "-14s",
-      color: "#C96F32",
-      animation: "season-fall-left",
-    },
-    {
-      left: "34%",
-      size: 7,
-      duration: "29s",
-      delay: "-9s",
-      color: "#E0A04A",
-      animation: "season-fall-right",
-    },
-    {
-      left: "66%",
-      size: 8,
-      duration: "27s",
-      delay: "-18s",
-      color: "#B85D2A",
-      animation: "season-fall-left",
-    },
-    {
-      left: "83%",
-      size: 11,
-      duration: "22s",
-      delay: "-7s",
-      color: "#E4A44E",
-      animation: "season-fall-right",
-    },
-    {
-      left: "95%",
-      size: 8,
-      duration: "28s",
-      delay: "-21s",
-      color: "#C87937",
-      animation: "season-fall-left",
-    },
-  ];
-
+function AutumnDecor({ isSakura, onToggleSakura }) {
   return (
     <>
-      <Branch side="left" tone="autumn" />
-      <Branch side="right" tone="autumn" />
+      <Branch
+        side="left"
+        tone="autumn"
+        isSakura={isSakura}
+        onClick={onToggleSakura}
+      />
 
-      {leaves.map((leaf, index) => (
-        <span
-          key={index}
-          className={`season-particle ${leaf.animation} absolute top-[-50px] rounded-[85%_15%_85%_15%] opacity-70 shadow-[0_2px_6px_rgba(0,0,0,0.10)]`}
-          style={{
-            left: leaf.left,
-            width: `${leaf.size}px`,
-            height: `${leaf.size * 1.6}px`,
-            backgroundColor: leaf.color,
-            animationDuration: leaf.duration,
-            animationDelay: leaf.delay,
-          }}
-        />
-      ))}
+      <Branch
+        side="right"
+        tone="autumn"
+        isSakura={isSakura}
+        onClick={onToggleSakura}
+      />
+
+      {isSakura ? <SakuraParticles /> : <AutumnParticles />}
     </>
   );
+}
+
+function AutumnParticles() {
+  const leaves = [
+    ["4%", 11, "19s", "-4s", "#D98A3A", "season-fall-right"],
+    ["16%", 9, "25s", "-14s", "#C96F32", "season-fall-left"],
+    ["34%", 7, "29s", "-9s", "#E0A04A", "season-fall-right"],
+    ["66%", 8, "27s", "-18s", "#B85D2A", "season-fall-left"],
+    ["83%", 11, "22s", "-7s", "#E4A44E", "season-fall-right"],
+    ["95%", 8, "28s", "-21s", "#C87937", "season-fall-left"],
+  ];
+
+  return leaves.map(
+    ([left, size, duration, delay, color, animation], index) => (
+      <span
+        key={index}
+        className={`season-particle ${animation} absolute top-[-50px] rounded-[85%_15%_85%_15%] opacity-70`}
+        style={{
+          left,
+          width: `${size}px`,
+          height: `${size * 1.6}px`,
+          backgroundColor: color,
+          animationDuration: duration,
+          animationDelay: delay,
+        }}
+      />
+    ),
+  );
+}
+
+/* ========================================
+   SAKURA PARTICLES
+======================================== */
+
+function SakuraParticles() {
+  const petals = [
+    ["4%", 9, "18s", "-3s", "season-fall-right"],
+    ["13%", 7, "24s", "-13s", "season-fall-left"],
+    ["25%", 8, "22s", "-7s", "season-fall-right"],
+    ["39%", 6, "28s", "-19s", "season-fall-left"],
+    ["55%", 7, "25s", "-11s", "season-fall-right"],
+    ["70%", 8, "21s", "-5s", "season-fall-left"],
+    ["84%", 6, "27s", "-17s", "season-fall-right"],
+    ["95%", 9, "23s", "-9s", "season-fall-left"],
+  ];
+
+  return petals.map(([left, size, duration, delay, animation], index) => (
+    <span
+      key={index}
+      className={`season-particle ${animation} absolute top-[-50px] rounded-[75%_25%_70%_30%] shadow-[0_2px_7px_rgba(220,120,160,0.16)]`}
+      style={{
+        left,
+        width: `${size}px`,
+        height: `${size * 1.35}px`,
+        backgroundColor: index % 2 === 0 ? "#F4B8CE" : "#FFD1DF",
+        animationDuration: duration,
+        animationDelay: delay,
+      }}
+    />
+  ));
 }
 
 /* ========================================
@@ -261,62 +249,14 @@ function AutumnDecor() {
 
 function WinterDecor() {
   const snowflakes = [
-    {
-      left: "5%",
-      size: 4,
-      duration: "19s",
-      delay: "-4s",
-      animation: "season-snow-left",
-    },
-    {
-      left: "16%",
-      size: 3,
-      duration: "24s",
-      delay: "-12s",
-      animation: "season-snow-right",
-    },
-    {
-      left: "29%",
-      size: 5,
-      duration: "21s",
-      delay: "-7s",
-      animation: "season-snow-left",
-    },
-    {
-      left: "43%",
-      size: 3,
-      duration: "27s",
-      delay: "-17s",
-      animation: "season-snow-right",
-    },
-    {
-      left: "61%",
-      size: 4,
-      duration: "23s",
-      delay: "-10s",
-      animation: "season-snow-left",
-    },
-    {
-      left: "75%",
-      size: 3,
-      duration: "26s",
-      delay: "-15s",
-      animation: "season-snow-right",
-    },
-    {
-      left: "87%",
-      size: 5,
-      duration: "20s",
-      delay: "-6s",
-      animation: "season-snow-left",
-    },
-    {
-      left: "96%",
-      size: 3,
-      duration: "29s",
-      delay: "-22s",
-      animation: "season-snow-right",
-    },
+    ["5%", 4, "19s", "-4s", "season-snow-left"],
+    ["16%", 3, "24s", "-12s", "season-snow-right"],
+    ["29%", 5, "21s", "-7s", "season-snow-left"],
+    ["43%", 3, "27s", "-17s", "season-snow-right"],
+    ["61%", 4, "23s", "-10s", "season-snow-left"],
+    ["75%", 3, "26s", "-15s", "season-snow-right"],
+    ["87%", 5, "20s", "-6s", "season-snow-left"],
+    ["96%", 3, "29s", "-22s", "season-snow-right"],
   ];
 
   return (
@@ -325,16 +265,16 @@ function WinterDecor() {
 
       <div className="absolute right-[-180px] top-[350px] h-[400px] w-[400px] rounded-full bg-[#D7EAFF]/10 blur-[120px]" />
 
-      {snowflakes.map((flake, index) => (
+      {snowflakes.map(([left, size, duration, delay, animation], index) => (
         <span
           key={index}
-          className={`season-particle ${flake.animation} absolute top-[-30px] rounded-full bg-white/80 shadow-[0_0_8px_rgba(255,255,255,0.55)]`}
+          className={`season-particle ${animation} absolute top-[-30px] rounded-full bg-white/80 shadow-[0_0_8px_rgba(255,255,255,0.55)]`}
           style={{
-            left: flake.left,
-            width: `${flake.size}px`,
-            height: `${flake.size}px`,
-            animationDuration: flake.duration,
-            animationDelay: flake.delay,
+            left,
+            width: `${size}px`,
+            height: `${size}px`,
+            animationDuration: duration,
+            animationDelay: delay,
           }}
         />
       ))}
@@ -343,10 +283,10 @@ function WinterDecor() {
 }
 
 /* ========================================
-   BRANCHES
+   BRANCH
 ======================================== */
 
-function Branch({ side, tone }) {
+function Branch({ side, tone, isSakura, onClick }) {
   const isLeft = side === "left";
 
   const colors = {
@@ -367,30 +307,44 @@ function Branch({ side, tone }) {
       leaf: "#B96832",
       leafSecondary: "#D48A3F",
     },
+
+    sakura: {
+      branch: "#725044",
+      leaf: "#F2AFC7",
+      leafSecondary: "#FFD0DE",
+    },
   };
 
-  const currentColors = colors[tone] || colors.summer;
+  const currentColors = isSakura
+    ? colors.sakura
+    : colors[tone] || colors.summer;
 
   return (
-    <div
-      className={`absolute top-[120px] hidden h-[320px] w-[220px] md:block ${
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={isSakura ? "Switch to seasonal branch" : "Switch to sakura"}
+      className={`pointer-events-auto absolute top-[120px] hidden h-[320px] w-[220px] cursor-pointer border-0 bg-transparent p-0 outline-none md:block ${
         isLeft
           ? "left-[-155px] rotate-[3deg]"
           : "right-[-155px] -rotate-[3deg] scale-x-[-1]"
       }`}
     >
-      <div className="season-branch h-full w-full opacity-[0.32] dark:opacity-[0.25]">
+      <div
+        className={`season-branch h-full w-full transition-all duration-700 ${
+          isSakura
+            ? "opacity-[0.46] dark:opacity-[0.42]"
+            : "opacity-[0.32] dark:opacity-[0.25]"
+        }`}
+      >
         <svg viewBox="0 0 200 300" className="h-full w-full" fill="none">
-          {/* MAIN BRANCH */}
-
           <path
             d="M5 15C42 45 58 91 78 122C101 157 134 179 163 236"
             stroke={currentColors.branch}
             strokeWidth="5"
             strokeLinecap="round"
+            className="transition-all duration-700"
           />
-
-          {/* SMALL BRANCHES */}
 
           <path
             d="M48 74C79 60 105 43 133 20"
@@ -427,55 +381,42 @@ function Branch({ side, tone }) {
             strokeLinecap="round"
           />
 
-          {/* LEAVES */}
-
           <Leaf x={130} y={22} rotation={35} color={currentColors.leaf} />
-
           <Leaf
             x={99}
             y={48}
             rotation={-25}
             color={currentColors.leafSecondary}
           />
-
           <Leaf x={62} y={68} rotation={30} color={currentColors.leaf} />
-
           <Leaf
             x={20}
             y={88}
             rotation={-35}
             color={currentColors.leafSecondary}
           />
-
           <Leaf x={55} y={111} rotation={45} color={currentColors.leaf} />
-
           <Leaf
             x={92}
             y={136}
             rotation={-30}
             color={currentColors.leafSecondary}
           />
-
           <Leaf x={158} y={115} rotation={40} color={currentColors.leaf} />
-
           <Leaf
             x={139}
             y={151}
             rotation={-25}
             color={currentColors.leafSecondary}
           />
-
           <Leaf x={119} y={186} rotation={35} color={currentColors.leaf} />
-
           <Leaf
             x={82}
             y={226}
             rotation={-35}
             color={currentColors.leafSecondary}
           />
-
           <Leaf x={158} y={213} rotation={40} color={currentColors.leaf} />
-
           <Leaf
             x={169}
             y={242}
@@ -484,13 +425,9 @@ function Branch({ side, tone }) {
           />
         </svg>
       </div>
-    </div>
+    </button>
   );
 }
-
-/* ========================================
-   LEAF
-======================================== */
 
 function Leaf({ x, y, rotation, color }) {
   return (
@@ -501,6 +438,7 @@ function Leaf({ x, y, rotation, color }) {
       ry="20"
       transform={`rotate(${rotation} ${x} ${y})`}
       fill={color}
+      className="transition-all duration-700"
     />
   );
 }
