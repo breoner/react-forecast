@@ -39,46 +39,46 @@ function SeasonalDecor() {
 function SpringDecor() {
   const petals = [
     {
-      left: "7%",
-      size: 12,
-      duration: "17s",
-      delay: "-4s",
-      animation: "season-fall-left",
-    },
-    {
-      left: "18%",
-      size: 9,
-      duration: "21s",
-      delay: "-12s",
-      animation: "season-fall-right",
-    },
-    {
-      left: "38%",
-      size: 8,
-      duration: "24s",
-      delay: "-7s",
-      animation: "season-fall-left",
-    },
-    {
-      left: "68%",
+      left: "5%",
       size: 10,
       duration: "19s",
-      delay: "-14s",
+      delay: "-4s",
       animation: "season-fall-right",
     },
     {
-      left: "84%",
-      size: 12,
-      duration: "23s",
-      delay: "-5s",
+      left: "15%",
+      size: 8,
+      duration: "24s",
+      delay: "-15s",
       animation: "season-fall-left",
+    },
+    {
+      left: "34%",
+      size: 7,
+      duration: "28s",
+      delay: "-9s",
+      animation: "season-fall-right",
+    },
+    {
+      left: "65%",
+      size: 8,
+      duration: "25s",
+      delay: "-18s",
+      animation: "season-fall-left",
+    },
+    {
+      left: "82%",
+      size: 10,
+      duration: "22s",
+      delay: "-7s",
+      animation: "season-fall-right",
     },
     {
       left: "95%",
       size: 8,
-      duration: "26s",
-      delay: "-17s",
-      animation: "season-fall-right",
+      duration: "27s",
+      delay: "-20s",
+      animation: "season-fall-left",
     },
   ];
 
@@ -90,7 +90,7 @@ function SpringDecor() {
       {petals.map((petal, index) => (
         <span
           key={index}
-          className={`season-particle ${petal.animation} absolute top-[-50px] rounded-[70%_30%_70%_30%] bg-[#F0B9D0]/80 shadow-[0_2px_6px_rgba(0,0,0,0.10)]`}
+          className={`season-particle ${petal.animation} absolute top-[-50px] rounded-[70%_30%_70%_30%] bg-[#F0B9D0]/70 shadow-[0_2px_6px_rgba(0,0,0,0.08)]`}
           style={{
             left: petal.left,
             width: `${petal.size}px`,
@@ -111,45 +111,45 @@ function SpringDecor() {
 function SummerDecor() {
   const leaves = [
     {
-      left: "5%",
-      size: 14,
-      duration: "19s",
-      delay: "-4s",
-      animation: "season-fall-right",
-    },
-    {
-      left: "16%",
+      left: "4%",
       size: 11,
-      duration: "24s",
-      delay: "-15s",
-      animation: "season-fall-left",
-    },
-    {
-      left: "34%",
-      size: 9,
-      duration: "28s",
-      delay: "-9s",
-      animation: "season-fall-right",
-    },
-    {
-      left: "64%",
-      size: 10,
-      duration: "25s",
-      delay: "-18s",
-      animation: "season-fall-left",
-    },
-    {
-      left: "79%",
-      size: 13,
       duration: "21s",
-      delay: "-7s",
+      delay: "-5s",
       animation: "season-fall-right",
     },
     {
-      left: "92%",
-      size: 11,
-      duration: "26s",
+      left: "14%",
+      size: 8,
+      duration: "27s",
+      delay: "-16s",
+      animation: "season-fall-left",
+    },
+    {
+      left: "32%",
+      size: 7,
+      duration: "30s",
+      delay: "-10s",
+      animation: "season-fall-right",
+    },
+    {
+      left: "68%",
+      size: 7,
+      duration: "29s",
       delay: "-20s",
+      animation: "season-fall-left",
+    },
+    {
+      left: "84%",
+      size: 10,
+      duration: "24s",
+      delay: "-8s",
+      animation: "season-fall-right",
+    },
+    {
+      left: "96%",
+      size: 8,
+      duration: "28s",
+      delay: "-22s",
       animation: "season-fall-left",
     },
   ];
@@ -162,7 +162,7 @@ function SummerDecor() {
       {leaves.map((leaf, index) => (
         <span
           key={index}
-          className={`season-particle ${leaf.animation} absolute top-[-50px] rounded-[85%_15%_85%_15%] bg-[#668F58]/80 shadow-[0_2px_6px_rgba(0,0,0,0.12)] dark:bg-[#8BAD7D]/85`}
+          className={`season-particle ${leaf.animation} absolute top-[-50px] rounded-[85%_15%_85%_15%] bg-[#668F58]/65 shadow-[0_2px_6px_rgba(0,0,0,0.10)] dark:bg-[#8BAD7D]/65`}
           style={{
             left: leaf.left,
             width: `${leaf.size}px`,
@@ -183,50 +183,50 @@ function SummerDecor() {
 function AutumnDecor() {
   const leaves = [
     {
-      left: "5%",
-      size: 14,
-      duration: "17s",
+      left: "4%",
+      size: 11,
+      duration: "19s",
       delay: "-4s",
       color: "#D98A3A",
       animation: "season-fall-right",
     },
     {
-      left: "17%",
-      size: 11,
-      duration: "22s",
-      delay: "-13s",
+      left: "16%",
+      size: 9,
+      duration: "25s",
+      delay: "-14s",
       color: "#C96F32",
       animation: "season-fall-left",
     },
     {
-      left: "35%",
-      size: 9,
-      duration: "26s",
-      delay: "-8s",
+      left: "34%",
+      size: 7,
+      duration: "29s",
+      delay: "-9s",
       color: "#E0A04A",
       animation: "season-fall-right",
     },
     {
-      left: "59%",
-      size: 10,
-      duration: "24s",
-      delay: "-17s",
+      left: "66%",
+      size: 8,
+      duration: "27s",
+      delay: "-18s",
       color: "#B85D2A",
       animation: "season-fall-left",
     },
     {
-      left: "78%",
-      size: 14,
-      duration: "20s",
-      delay: "-6s",
+      left: "83%",
+      size: 11,
+      duration: "22s",
+      delay: "-7s",
       color: "#E4A44E",
       animation: "season-fall-right",
     },
     {
-      left: "93%",
-      size: 11,
-      duration: "25s",
-      delay: "-19s",
+      left: "95%",
+      size: 8,
+      duration: "28s",
+      delay: "-21s",
       color: "#C87937",
       animation: "season-fall-left",
     },
@@ -240,7 +240,7 @@ function AutumnDecor() {
       {leaves.map((leaf, index) => (
         <span
           key={index}
-          className={`season-particle ${leaf.animation} absolute top-[-50px] rounded-[85%_15%_85%_15%] shadow-[0_2px_6px_rgba(0,0,0,0.14)]`}
+          className={`season-particle ${leaf.animation} absolute top-[-50px] rounded-[85%_15%_85%_15%] opacity-70 shadow-[0_2px_6px_rgba(0,0,0,0.10)]`}
           style={{
             left: leaf.left,
             width: `${leaf.size}px`,
@@ -263,72 +263,72 @@ function WinterDecor() {
   const snowflakes = [
     {
       left: "5%",
-      size: 5,
-      duration: "17s",
+      size: 4,
+      duration: "19s",
       delay: "-4s",
       animation: "season-snow-left",
     },
     {
       left: "16%",
-      size: 4,
-      duration: "21s",
-      delay: "-11s",
+      size: 3,
+      duration: "24s",
+      delay: "-12s",
       animation: "season-snow-right",
     },
     {
       left: "29%",
-      size: 6,
-      duration: "19s",
+      size: 5,
+      duration: "21s",
       delay: "-7s",
       animation: "season-snow-left",
     },
     {
       left: "43%",
       size: 3,
-      duration: "24s",
-      delay: "-16s",
+      duration: "27s",
+      delay: "-17s",
       animation: "season-snow-right",
     },
     {
       left: "61%",
-      size: 5,
-      duration: "20s",
-      delay: "-9s",
+      size: 4,
+      duration: "23s",
+      delay: "-10s",
       animation: "season-snow-left",
     },
     {
       left: "75%",
-      size: 4,
-      duration: "23s",
-      delay: "-14s",
+      size: 3,
+      duration: "26s",
+      delay: "-15s",
       animation: "season-snow-right",
     },
     {
       left: "87%",
-      size: 6,
-      duration: "18s",
-      delay: "-5s",
+      size: 5,
+      duration: "20s",
+      delay: "-6s",
       animation: "season-snow-left",
     },
     {
       left: "96%",
       size: 3,
-      duration: "26s",
-      delay: "-20s",
+      duration: "29s",
+      delay: "-22s",
       animation: "season-snow-right",
     },
   ];
 
   return (
     <>
-      <div className="absolute left-[-120px] top-[120px] h-[350px] w-[350px] rounded-full bg-[#A8D0FF]/10 blur-[100px]" />
+      <div className="absolute left-[-180px] top-[120px] h-[350px] w-[350px] rounded-full bg-[#A8D0FF]/10 blur-[110px]" />
 
-      <div className="absolute right-[-140px] top-[350px] h-[400px] w-[400px] rounded-full bg-[#D7EAFF]/10 blur-[120px]" />
+      <div className="absolute right-[-180px] top-[350px] h-[400px] w-[400px] rounded-full bg-[#D7EAFF]/10 blur-[120px]" />
 
       {snowflakes.map((flake, index) => (
         <span
           key={index}
-          className={`season-particle ${flake.animation} absolute top-[-30px] rounded-full bg-white/90 shadow-[0_0_8px_rgba(255,255,255,0.65)]`}
+          className={`season-particle ${flake.animation} absolute top-[-30px] rounded-full bg-white/80 shadow-[0_0_8px_rgba(255,255,255,0.55)]`}
           style={{
             left: flake.left,
             width: `${flake.size}px`,
@@ -343,7 +343,7 @@ function WinterDecor() {
 }
 
 /* ========================================
-   BRANCH
+   BRANCHES
 ======================================== */
 
 function Branch({ side, tone }) {
@@ -373,19 +373,15 @@ function Branch({ side, tone }) {
 
   return (
     <div
-      className={`absolute top-[90px] hidden h-[360px] w-[250px] md:block ${
+      className={`absolute top-[120px] hidden h-[320px] w-[220px] md:block ${
         isLeft
-          ? "left-[-45px] rotate-[4deg]"
-          : "right-[-45px] -rotate-[4deg] scale-x-[-1]"
+          ? "left-[-155px] rotate-[3deg]"
+          : "right-[-155px] -rotate-[3deg] scale-x-[-1]"
       }`}
     >
-      <div className="season-branch h-full w-full opacity-[0.55] dark:opacity-[0.48]">
-        <svg
-          viewBox="0 0 200 300"
-          className="h-full w-full"
-          fill="none"
-        >
-          {/* Main branch */}
+      <div className="season-branch h-full w-full opacity-[0.32] dark:opacity-[0.25]">
+        <svg viewBox="0 0 200 300" className="h-full w-full" fill="none">
+          {/* MAIN BRANCH */}
 
           <path
             d="M5 15C42 45 58 91 78 122C101 157 134 179 163 236"
@@ -394,7 +390,7 @@ function Branch({ side, tone }) {
             strokeLinecap="round"
           />
 
-          {/* Secondary branches */}
+          {/* SMALL BRANCHES */}
 
           <path
             d="M48 74C79 60 105 43 133 20"
@@ -431,14 +427,9 @@ function Branch({ side, tone }) {
             strokeLinecap="round"
           />
 
-          {/* Leaves */}
+          {/* LEAVES */}
 
-          <Leaf
-            x={130}
-            y={22}
-            rotation={35}
-            color={currentColors.leaf}
-          />
+          <Leaf x={130} y={22} rotation={35} color={currentColors.leaf} />
 
           <Leaf
             x={99}
@@ -447,12 +438,7 @@ function Branch({ side, tone }) {
             color={currentColors.leafSecondary}
           />
 
-          <Leaf
-            x={62}
-            y={68}
-            rotation={30}
-            color={currentColors.leaf}
-          />
+          <Leaf x={62} y={68} rotation={30} color={currentColors.leaf} />
 
           <Leaf
             x={20}
@@ -461,12 +447,7 @@ function Branch({ side, tone }) {
             color={currentColors.leafSecondary}
           />
 
-          <Leaf
-            x={55}
-            y={111}
-            rotation={45}
-            color={currentColors.leaf}
-          />
+          <Leaf x={55} y={111} rotation={45} color={currentColors.leaf} />
 
           <Leaf
             x={92}
@@ -475,12 +456,7 @@ function Branch({ side, tone }) {
             color={currentColors.leafSecondary}
           />
 
-          <Leaf
-            x={158}
-            y={115}
-            rotation={40}
-            color={currentColors.leaf}
-          />
+          <Leaf x={158} y={115} rotation={40} color={currentColors.leaf} />
 
           <Leaf
             x={139}
@@ -489,12 +465,7 @@ function Branch({ side, tone }) {
             color={currentColors.leafSecondary}
           />
 
-          <Leaf
-            x={119}
-            y={186}
-            rotation={35}
-            color={currentColors.leaf}
-          />
+          <Leaf x={119} y={186} rotation={35} color={currentColors.leaf} />
 
           <Leaf
             x={82}
@@ -503,12 +474,7 @@ function Branch({ side, tone }) {
             color={currentColors.leafSecondary}
           />
 
-          <Leaf
-            x={158}
-            y={213}
-            rotation={40}
-            color={currentColors.leaf}
-          />
+          <Leaf x={158} y={213} rotation={40} color={currentColors.leaf} />
 
           <Leaf
             x={169}
@@ -522,12 +488,11 @@ function Branch({ side, tone }) {
   );
 }
 
-function Leaf({
-  x,
-  y,
-  rotation,
-  color,
-}) {
+/* ========================================
+   LEAF
+======================================== */
+
+function Leaf({ x, y, rotation, color }) {
   return (
     <ellipse
       cx={x}
