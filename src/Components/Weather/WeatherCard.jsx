@@ -1,21 +1,42 @@
+import { useState } from "react";
+
 import refreshIcon from "../../assets/refresh.svg";
 import deleteIcon from "../../assets/delete.svg";
 import { translations } from "../../data/translations";
+
+import WeatherIcon from "./WeatherIcon";
 
 function WeatherCard({
   city,
   weather,
   isFavorite,
+  isHome,
+  isRefreshing,
   onDetails,
   onDelete,
   onRefresh,
   onToggleFavorite,
+  onSetHomeCity,
   onHourlyForecast,
   onWeeklyForecast,
   onAssistant,
   language,
 }) {
   const t = translations[language];
+
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = () => {
+    if (isDeleting) {
+      return;
+    }
+
+    setIsDeleting(true);
+
+    setTimeout(() => {
+      onDelete();
+    }, 520);
+  };
 
   const locale = language === "ua" ? "uk-UA" : "en-US";
 
@@ -43,49 +64,149 @@ function WeatherCard({
 
   const description = weather.weather[0].description;
 
-  return (
-    <article className="group relative flex min-h-[500px] w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border border-black/5 bg-white p-[20px] text-black shadow-[0_12px_35px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-[4px] hover:shadow-[0_18px_45px_rgba(0,0,0,0.12)] dark:border-white/5 dark:bg-[#1C1C1C] dark:text-white">
-      <div className="absolute right-[-55px] top-[-55px] h-[150px] w-[150px] rounded-full bg-[#FFB36C]/15 blur-[45px]" />
+  const condition = weather.weather[0].main;
 
-      {/* CITY + FAVORITE */}
-      <div className="relative z-10 flex w-full items-start justify-between">
-        <div>
-          <p className="max-w-[210px] truncate text-[17px] font-semibold">
+  return (
+    <article
+      className={`group relative flex min-h-[500px] w-full max-w-[340px] flex-col overflow-hidden rounded-[24px] border bg-white p-[20px] text-black shadow-[0_12px_35px_rgba(0,0,0,0.08)] transition-[opacity,transform,filter,box-shadow,border-color] duration-[520ms] ease-[cubic-bezier(0.22,1,0.36,1)] dark:bg-[#1C1C1C] dark:text-white ${
+        isDeleting
+          ? "pointer-events-none translate-y-[120px] scale-[0.92] opacity-0 blur-[5px]"
+          : "translate-y-0 scale-100 opacity-100 blur-0 hover:-translate-y-[4px] hover:shadow-[0_18px_45px_rgba(0,0,0,0.12)]"
+      } ${
+        isHome
+          ? "border-[#FFB36C]/60 dark:border-[#FFB36C]/50"
+          : "border-black/5 dark:border-white/5"
+      }`}
+    >
+      {/* GLOW */}
+
+      <div
+        className={`absolute right-[-55px] top-[-55px] h-[150px] w-[150px] rounded-full blur-[45px] transition-colors duration-300 ${
+          isHome ? "bg-[#FFB36C]/25" : "bg-[#FFB36C]/15"
+        }`}
+      />
+
+      {/* HOME LABEL */}
+
+      {isHome && (
+        <div className="absolute left-[20px] top-[20px] z-20">
+          <span className="inline-flex items-center gap-[5px] rounded-full bg-[#FFF0E1] px-[9px] py-[5px] text-[8px] font-semibold uppercase tracking-[0.6px] text-[#B9651B] shadow-sm dark:bg-[#3A2C20] dark:text-[#FFC083]">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              className="h-[11px] w-[11px]"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m3 11 9-8 9 8"
+              />
+
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 10v10h14V10M9 20v-6h6v6"
+              />
+            </svg>
+
+            {language === "ua" ? "Головне" : "Home"}
+          </span>
+        </div>
+      )}
+
+      {/* CITY + ACTIONS */}
+
+      <div
+        className={`relative z-10 flex w-full items-start justify-between ${
+          isHome ? "pt-[31px]" : ""
+        }`}
+      >
+        <div className="min-w-0 pr-[10px]">
+          <p className="max-w-[190px] truncate text-[17px] font-semibold">
             {city.name}
           </p>
 
-          <p className="mt-[4px] text-[11px] font-medium text-[#555555] dark:text-[#C7C7C7]">
+          <p className="mt-[4px] max-w-[190px] truncate text-[11px] font-medium text-[#555555] dark:text-[#C7C7C7]">
             {city.state ? `${city.state}, ${city.country}` : city.country}
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onToggleFavorite}
-          aria-label="Toggle favorite"
-          className={`flex h-[38px] w-[38px] items-center justify-center rounded-full border transition-all duration-200 hover:scale-105 active:scale-95 ${
-            isFavorite
-              ? "border-[#FFB36C] bg-[#FFB36C]/15 text-[#FF9D4D]"
-              : "border-[#E5E5E5] bg-white text-black dark:border-[#3A3A3A] dark:bg-[#242424] dark:text-white"
-          }`}
-        >
-          <svg
-            viewBox="0 0 24 24"
-            className="h-[21px] w-[21px]"
-            fill={isFavorite ? "#FFB36C" : "transparent"}
-            stroke="currentColor"
-            strokeWidth="1.5"
+        <div className="flex shrink-0 items-center gap-[7px]">
+          {/* HOME */}
+
+          <button
+            type="button"
+            onClick={onSetHomeCity}
+            aria-label={isHome ? "Home city" : "Set as home city"}
+            title={
+              language === "ua"
+                ? isHome
+                  ? "Головне місто"
+                  : "Зробити головним"
+                : isHome
+                  ? "Home city"
+                  : "Set as home city"
+            }
+            className={`flex h-[38px] w-[38px] items-center justify-center rounded-full border transition-all duration-200 hover:scale-105 active:scale-95 ${
+              isHome
+                ? "border-[#FFB36C] bg-[#FFB36C] text-black shadow-[0_5px_15px_rgba(255,179,108,0.25)]"
+                : "border-[#E5E5E5] bg-white text-[#777777] hover:border-[#FFB36C] hover:bg-[#FFF7EF] hover:text-[#D9771E] dark:border-[#3A3A3A] dark:bg-[#242424] dark:text-[#BDBDBD] dark:hover:border-[#FFB36C] dark:hover:bg-[#332A22] dark:hover:text-[#FFB36C]"
+            }`}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"
-            />
-          </svg>
-        </button>
+            <svg
+              viewBox="0 0 24 24"
+              fill={isHome ? "currentColor" : "none"}
+              stroke="currentColor"
+              strokeWidth="1.6"
+              className="h-[19px] w-[19px]"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m3 11 9-8 9 8"
+              />
+
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 10v10h14V10M9 20v-6h6v6"
+              />
+            </svg>
+          </button>
+
+          {/* FAVORITE */}
+
+          <button
+            type="button"
+            onClick={onToggleFavorite}
+            aria-label="Toggle favorite"
+            className={`flex h-[38px] w-[38px] items-center justify-center rounded-full border transition-all duration-200 hover:scale-105 active:scale-95 ${
+              isFavorite
+                ? "border-[#FFB36C] bg-[#FFB36C]/15 text-[#FF9D4D]"
+                : "border-[#E5E5E5] bg-white text-black dark:border-[#3A3A3A] dark:bg-[#242424] dark:text-white"
+            }`}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              className="h-[21px] w-[21px]"
+              fill={isFavorite ? "#FFB36C" : "transparent"}
+              stroke="currentColor"
+              strokeWidth="1.5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78Z"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
       {/* TEMPERATURE */}
+
       <div className="relative z-10 mt-[22px] flex items-center justify-between">
         <div>
           <p className="text-[44px] font-semibold leading-none tracking-[-2px]">
@@ -97,16 +218,15 @@ function WeatherCard({
           </p>
         </div>
 
-        <div className="flex h-[110px] w-[110px] items-center justify-center rounded-full bg-[#F7F7F7] transition-colors duration-300 dark:bg-[#242424]">
-          <img
-            src={iconUrl}
-            alt={description}
-            className="h-[100px] w-[100px]"
-          />
-        </div>
+        <WeatherIcon
+          iconUrl={iconUrl}
+          description={description}
+          condition={condition}
+        />
       </div>
 
       {/* TIME / DATE / DAY */}
+
       <div className="relative z-10 mt-[20px] grid grid-cols-3 gap-[8px]">
         <div className="rounded-[13px] bg-[#F5F5F5] px-[8px] py-[11px] text-center dark:bg-[#242424]">
           <p className="text-[9px] font-semibold uppercase tracking-[0.8px] text-[#666666] dark:text-[#AAAAAA]">
@@ -139,7 +259,8 @@ function WeatherCard({
         </div>
       </div>
 
-      {/* FORECAST BUTTONS */}
+      {/* FORECAST */}
+
       <div className="relative z-10 mt-[18px] grid grid-cols-2 gap-[10px]">
         <button
           type="button"
@@ -159,6 +280,7 @@ function WeatherCard({
       </div>
 
       {/* ASSISTANT */}
+
       <button
         type="button"
         onClick={onAssistant}
@@ -182,33 +304,55 @@ function WeatherCard({
       </button>
 
       {/* BOTTOM ACTIONS */}
+
       <div className="relative z-10 mt-auto flex items-center gap-[8px] pt-[18px]">
+        {/* REFRESH */}
+
         <button
           type="button"
           onClick={onRefresh}
-          aria-label="Refresh weather"
-          className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[12px] border border-[#DADADA] bg-white shadow-sm transition-all duration-200 hover:rotate-180 hover:border-[#FFB36C] active:scale-95 dark:border-[#444444] dark:bg-[#292929]"
+          disabled={isRefreshing || isDeleting}
+          aria-label={isRefreshing ? "Refreshing weather" : "Refresh weather"}
+          className={`flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[12px] border bg-white shadow-sm transition-all duration-200 active:scale-95 dark:bg-[#292929] ${
+            isRefreshing
+              ? "cursor-wait border-[#FFB36C] opacity-70"
+              : "border-[#DADADA] hover:border-[#FFB36C] dark:border-[#444444]"
+          }`}
         >
           <img
             src={refreshIcon}
             alt=""
-            className="h-[20px] w-[20px] dark:invert"
+            className={`h-[20px] w-[20px] dark:invert ${
+              isRefreshing
+                ? "animate-spin"
+                : "transition-transform duration-500"
+            }`}
           />
         </button>
+
+        {/* DETAILS */}
 
         <button
           type="button"
           onClick={onDetails}
+          disabled={isDeleting}
           className="h-[40px] flex-1 rounded-[12px] bg-[#FFB36C] px-[18px] text-[10px] font-semibold text-black shadow-[0_5px_15px_rgba(255,179,108,0.25)] transition-all duration-200 hover:bg-[#FFA95D] hover:shadow-[0_7px_18px_rgba(255,179,108,0.35)] active:scale-[0.98]"
         >
           {t.weather.seeMore}
         </button>
 
+        {/* DELETE */}
+
         <button
           type="button"
-          onClick={onDelete}
+          onClick={handleDeleteClick}
+          disabled={isDeleting}
           aria-label="Delete city"
-          className="flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[12px] border border-[#DADADA] bg-white shadow-sm transition-all duration-200 hover:border-red-400 hover:bg-red-50 active:scale-95 dark:border-[#444444] dark:bg-[#292929] dark:hover:bg-red-950/30"
+          className={`flex h-[40px] w-[40px] shrink-0 items-center justify-center rounded-[12px] border bg-white shadow-sm transition-all duration-200 active:scale-95 dark:bg-[#292929] ${
+            isDeleting
+              ? "cursor-default border-red-400 bg-red-50 opacity-50 dark:border-red-500 dark:bg-red-950/30"
+              : "border-[#DADADA] hover:border-red-400 hover:bg-red-50 dark:border-[#444444] dark:hover:bg-red-950/30"
+          }`}
         >
           <img
             src={deleteIcon}

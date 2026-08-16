@@ -9,11 +9,11 @@ import "swiper/css/navigation";
 const API_KEY = import.meta.env.VITE_PIXABAY_API_KEY;
 
 /*
-  Приводим строки к удобному виду для сравнения.
-
-  "Kryvyi Rih" -> "kryvyi rih"
-  "Кривий Ріг" -> "кривии ріг"
+  ========================================
+  NORMALIZE TEXT
+  ========================================
 */
+
 const normalizeText = (value = "") => {
   return value
     .toLowerCase()
@@ -24,6 +24,12 @@ const normalizeText = (value = "") => {
     .trim();
 };
 
+/*
+  ========================================
+  CITY PHOTO CARD
+  ========================================
+*/
+
 function CityPhotoCard({ image, language }) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -31,6 +37,7 @@ function CityPhotoCard({ image, language }) {
   return (
     <article className="group relative h-[285px] overflow-hidden rounded-[22px] border border-black/[0.06] bg-[#E8E8E8] shadow-[0_10px_30px_rgba(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-[0_16px_40px_rgba(0,0,0,0.13)] dark:border-white/[0.06] dark:bg-[#202020]">
       {/* SKELETON */}
+
       {!loaded && !error && (
         <div className="absolute inset-0 animate-pulse bg-[#E6E6E6] dark:bg-[#242424]">
           <div className="absolute bottom-[20px] left-[18px] right-[18px]">
@@ -42,6 +49,7 @@ function CityPhotoCard({ image, language }) {
       )}
 
       {/* IMAGE */}
+
       {!error && (
         <img
           src={image.url}
@@ -60,6 +68,7 @@ function CityPhotoCard({ image, language }) {
       )}
 
       {/* IMAGE ERROR */}
+
       {error && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#EEEEEE] px-[20px] text-center dark:bg-[#242424]">
           <div className="flex h-[54px] w-[54px] items-center justify-center rounded-[16px] bg-[#FFF0E1] text-[#D9771E] dark:bg-[#3A2C20] dark:text-[#FFB36C]">
@@ -91,11 +100,13 @@ function CityPhotoCard({ image, language }) {
       )}
 
       {/* CONTENT */}
+
       {loaded && !error && (
         <>
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/15 to-transparent" />
 
           {/* CITY BADGE */}
+
           <div className="absolute left-[16px] top-[16px]">
             <div className="flex items-center gap-[6px] rounded-full border border-white/15 bg-black/35 px-[10px] py-[6px] text-[9px] font-semibold text-white backdrop-blur-md">
               <span className="h-[5px] w-[5px] rounded-full bg-[#FFB36C]" />
@@ -105,6 +116,7 @@ function CityPhotoCard({ image, language }) {
           </div>
 
           {/* BOTTOM CONTENT */}
+
           <div className="absolute bottom-0 left-0 right-0 p-[18px]">
             <div className="flex items-end justify-between gap-[15px]">
               <div className="min-w-0">
@@ -132,6 +144,12 @@ function CityPhotoCard({ image, language }) {
   );
 }
 
+/*
+  ========================================
+  NATURE SLIDER
+  ========================================
+*/
+
 function NatureSlider({ cities, language }) {
   const swiperRef = useRef(null);
 
@@ -142,23 +160,27 @@ function NatureSlider({ cities, language }) {
   const [slidesPerView, setSlidesPerView] = useState(1);
 
   /*
-    Берём только favorite.
+    ========================================
+    FAVORITE CITIES
+    ========================================
   */
+
   const favoriteCities = useMemo(() => {
     return cities.filter((city) => city.isFavorite);
   }, [cities]);
 
-  /*
-    Сигнатура нужна, чтобы фотографии
-    не перезапрашивались просто из-за
-    обновления температуры.
-  */
   const favoritesKey = useMemo(() => {
     return favoriteCities
       .map((city) => city.id)
       .sort()
       .join("|");
   }, [favoriteCities]);
+
+  /*
+    ========================================
+    LOAD CITY IMAGES
+    ========================================
+  */
 
   useEffect(() => {
     if (favoriteCities.length === 0) {
@@ -174,50 +196,98 @@ function NatureSlider({ cities, language }) {
 
         const allCityResults = await Promise.all(
           favoriteCities.map(async (city) => {
+            /*
+              ========================================
+              CITY DATA
+              ========================================
+            */
+
             const cityName = city.place?.name || city.weather?.name || "";
 
             const englishName = city.place?.local_names?.en || "";
 
             const ukrainianName = city.place?.local_names?.uk || "";
 
+            const russianName = city.place?.local_names?.ru || "";
+
             const country =
               city.place?.country || city.weather?.sys?.country || "";
 
-            /*
-                  Собираем разные варианты названия.
-
-                  Например:
-                  Kryvyi Rih
-                  Кривий Ріг
-                */
-            const nameVariants = [cityName, englishName, ukrainianName]
-              .filter(Boolean)
-              .filter((name, index, array) => array.indexOf(name) === index);
-
-            /*
-                  Pixabay лучше ищет по английскому,
-                  поэтому при наличии local_names.en
-                  используем его первым.
-                */
-            const searchName = englishName || cityName;
-
-            if (!searchName) {
+            if (!cityName) {
               return [];
             }
 
             /*
-                  Делаем два запроса.
+              ========================================
+              SEARCH VARIANTS
+              ========================================
+            */
 
-                  1. Только город — наиболее точный.
-                  2. Город + страна — дополнительный.
-                */
-            const queries = [searchName, `${searchName} ${country}`];
+            let searchVariants = [
+              englishName,
+              ukrainianName,
+              russianName,
+              cityName,
+            ].filter(Boolean);
 
-            const responses = await Promise.all(
-              queries.map(async (query) => {
+            const normalizedNames = [
+              cityName,
+              englishName,
+              ukrainianName,
+              russianName,
+            ]
+              .filter(Boolean)
+              .map((name) => normalizeText(name));
+
+            /*
+              ========================================
+              KRYVYI RIH SPECIAL SEARCH
+              ========================================
+            */
+
+            const isKryvyiRih = normalizedNames.some(
+              (name) =>
+                name.includes("kryvyi rih") ||
+                name.includes("krivoy rog") ||
+                name.includes("krivoi rog") ||
+                name.includes("кривии ріг") ||
+                name.includes("кривои рог"),
+            );
+
+            if (isKryvyiRih) {
+              searchVariants = [
+                "Кривой Рог Украина",
+                "Кривий Ріг Україна",
+                "Krivoy Rog Ukraine",
+                "Kryvyi Rih Ukraine",
+
+                "Кривой Рог",
+                "Кривий Ріг",
+                "Krivoy Rog",
+                "Kryvyi Rih",
+                "Krivoi Rog",
+              ];
+            }
+
+            searchVariants = [
+              ...new Set(
+                searchVariants.filter(Boolean).map((name) => name.trim()),
+              ),
+            ];
+
+            /*
+              ========================================
+              PIXABAY REQUESTS
+              ========================================
+            */
+
+            const rawImages = [];
+
+            for (const variant of searchVariants) {
+              try {
                 const response = await fetch(
                   `https://pixabay.com/api/?key=${API_KEY}&q=${encodeURIComponent(
-                    query,
+                    variant,
                   )}&image_type=photo&orientation=horizontal&per_page=20&safesearch=true`,
                   {
                     signal: controller.signal,
@@ -225,84 +295,91 @@ function NatureSlider({ cities, language }) {
                 );
 
                 if (!response.ok) {
-                  return [];
+                  continue;
                 }
 
                 const data = await response.json();
 
-                return data.hits || [];
-              }),
-            );
+                if (!data.hits?.length) {
+                  continue;
+                }
+
+                rawImages.push(...data.hits);
+
+                if (isKryvyiRih && rawImages.length >= 20) {
+                  break;
+                }
+              } catch (error) {
+                if (error.name === "AbortError") {
+                  throw error;
+                }
+
+                console.error(`Pixabay search failed for ${variant}:`, error);
+              }
+            }
 
             /*
-                  Объединяем результаты двух запросов.
-                */
-            const rawImages = responses.flat();
+              ========================================
+              REMOVE DUPLICATES
+              ========================================
+            */
 
-            /*
-                  Убираем дубликаты Pixabay.
-                */
             const uniqueImages = rawImages.filter(
               (image, index, array) =>
                 array.findIndex((item) => item.id === image.id) === index,
             );
 
             /*
-                  СТРОГАЯ ПРОВЕРКА.
+              ========================================
+              VALIDATION
+              ========================================
+            */
 
-                  Фото попадёт в слайдер только если
-                  tags содержат название именно
-                  нашего города.
+            let validImages = [];
 
-                  Это защищает от случайных
-                  Нью-Йорков, Лондонов и т.д.
-                */
-            const validImages = uniqueImages.filter((image) => {
-              const tags = normalizeText(image.tags || "");
+            if (isKryvyiRih) {
+              validImages = uniqueImages;
+            } else {
+              const nameVariants = [
+                cityName,
+                englishName,
+                ukrainianName,
+                russianName,
+              ].filter(Boolean);
 
-              return nameVariants.some((name) => {
-                const normalizedName = normalizeText(name);
+              validImages = uniqueImages.filter((image) => {
+                const tags = normalizeText(image.tags || "");
 
-                if (!normalizedName) {
-                  return false;
-                }
+                return nameVariants.some((name) => {
+                  const normalizedName = normalizeText(name);
 
-                /*
-                            Сначала пробуем полное название.
-                          */
-                if (tags.includes(normalizedName)) {
-                  return true;
-                }
+                  if (!normalizedName) {
+                    return false;
+                  }
 
-                /*
-                            Для городов из нескольких слов:
+                  if (tags.includes(normalizedName)) {
+                    return true;
+                  }
 
-                            Kryvyi Rih
+                  const words = normalizedName
+                    .split(" ")
+                    .filter((word) => word.length >= 3);
 
-                            разрешаем вариант,
-                            когда в тегах присутствуют
-                            все слова названия.
-                          */
-                const words = normalizedName
-                  .split(" ")
-                  .filter((word) => word.length >= 3);
+                  if (words.length < 2) {
+                    return false;
+                  }
 
-                if (words.length < 2) {
-                  return false;
-                }
-
-                return words.every((word) => tags.includes(word));
+                  return words.every((word) => tags.includes(word));
+                });
               });
-            });
+            }
 
             /*
-                  Ограничиваем количество фото
-                  одного города.
+              ========================================
+              RESULT FOR CITY
+              ========================================
+            */
 
-                  Например:
-                  Kyiv -> максимум 8
-                  Kryvyi Rih -> максимум 8
-                */
             return validImages.slice(0, 8).map((image) => ({
               id: `${city.id}-${image.id}`,
 
@@ -310,7 +387,7 @@ function NatureSlider({ cities, language }) {
 
               cityId: city.id,
 
-              cityName: cityName || searchName,
+              cityName,
 
               country,
 
@@ -324,25 +401,9 @@ function NatureSlider({ cities, language }) {
         );
 
         /*
-          ---------------------------------
-          ПЕРЕМЕШИВАЕМ ПО ГОРОДАМ
-          ---------------------------------
-
-          Если favorites:
-
-          Kyiv
-          Kryvyi Rih
-          Lviv
-
-          получаем:
-
-          Kyiv photo 1
-          Kryvyi Rih photo 1
-          Lviv photo 1
-
-          Kyiv photo 2
-          Kryvyi Rih photo 2
-          Lviv photo 2
+          ========================================
+          MIX PHOTOS BY CITY
+          ========================================
         */
 
         const maxImagesPerCity = Math.max(
@@ -361,8 +422,9 @@ function NatureSlider({ cities, language }) {
         }
 
         /*
-          Ещё одна защита от дублей.
+          Финальная защита от дублей Pixabay.
         */
+
         const finalImages = mixedImages.filter(
           (image, index, array) =>
             array.findIndex((item) => item.pixabayId === image.pixabayId) ===
@@ -393,9 +455,9 @@ function NatureSlider({ cities, language }) {
   }, [favoritesKey]);
 
   /*
-    ---------------------------------
+    ========================================
     SWIPER STATE
-    ---------------------------------
+    ========================================
   */
 
   const updateSliderState = (swiper) => {
@@ -414,9 +476,9 @@ function NatureSlider({ cities, language }) {
   const paginationCount = lastPossibleIndex + 1;
 
   /*
-    ---------------------------------
+    ========================================
     NO FAVORITES
-    ---------------------------------
+    ========================================
   */
 
   if (favoriteCities.length === 0) {
@@ -454,9 +516,9 @@ function NatureSlider({ cities, language }) {
   }
 
   /*
-    ---------------------------------
+    ========================================
     LOADING
-    ---------------------------------
+    ========================================
   */
 
   if (loading) {
@@ -473,10 +535,9 @@ function NatureSlider({ cities, language }) {
   }
 
   /*
-    ---------------------------------
-    FAVORITES EXIST,
-    BUT PIXABAY FOUND NOTHING RELIABLE
-    ---------------------------------
+    ========================================
+    NO RELIABLE PHOTOS
+    ========================================
   */
 
   if (images.length === 0) {
@@ -504,17 +565,17 @@ function NatureSlider({ cities, language }) {
 
         <p className="mx-auto mt-[5px] max-w-[350px] text-[10px] leading-[1.6] text-[#777777] dark:text-[#AAAAAA]">
           {language === "ua"
-            ? "Pixabay не має достатньо точних фотографій цих міст. Ми не показуємо випадкові фото інших міст."
-            : "Pixabay does not have reliable photos for these cities. Random photos of other cities are not shown."}
+            ? "Pixabay не має достатньо точних фотографій цих міст."
+            : "Pixabay does not have reliable photos for these cities."}
         </p>
       </div>
     );
   }
 
   /*
-    ---------------------------------
+    ========================================
     SLIDER
-    ---------------------------------
+    ========================================
   */
 
   return (
@@ -558,6 +619,7 @@ function NatureSlider({ cities, language }) {
       </Swiper>
 
       {/* PREVIOUS */}
+
       <button
         type="button"
         aria-label="Previous photo"
@@ -579,6 +641,7 @@ function NatureSlider({ cities, language }) {
       </button>
 
       {/* NEXT */}
+
       <button
         type="button"
         aria-label="Next photo"
@@ -600,6 +663,7 @@ function NatureSlider({ cities, language }) {
       </button>
 
       {/* CUSTOM PAGINATION */}
+
       {paginationCount > 1 && (
         <div className="mt-[22px] flex justify-center">
           <div className="flex max-w-full items-center gap-[6px] overflow-x-auto rounded-full border border-black/[0.06] bg-white px-[10px] py-[8px] shadow-[0_5px_18px_rgba(0,0,0,0.06)] dark:border-white/[0.08] dark:bg-[#1D1D1D]">

@@ -209,4 +209,367 @@ body {
   .season-branch {
     animation: none;
   }
+
+  /* ========================================
+   DYNAMIC HERO
+======================================== */
+
+  .hero-rain {
+    animation-name: heroRain;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes heroRain {
+    from {
+      transform: translate3d(0, -50px, 0) rotate(12deg);
+    }
+
+    to {
+      transform: translate3d(-80px, 650px, 0) rotate(12deg);
+    }
+  }
+
+  .hero-snow {
+    animation-name: heroSnow;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+
+  @keyframes heroSnow {
+    0% {
+      transform: translate3d(0, -20px, 0);
+      opacity: 0;
+    }
+
+    10% {
+      opacity: 0.8;
+    }
+
+    50% {
+      transform: translate3d(20px, 300px, 0);
+    }
+
+    100% {
+      transform: translate3d(-15px, 620px, 0);
+      opacity: 0;
+    }
+  }
+
+  .hero-cloud {
+    animation: heroCloud 32s linear infinite;
+  }
+
+  .hero-cloud-delayed {
+    animation: heroCloud 45s linear -15s infinite;
+  }
+
+  @keyframes heroCloud {
+    from {
+      transform: translateX(0);
+    }
+
+    to {
+      transform: translateX(1400px);
+    }
+  }
+
+  .hero-mist {
+    animation: heroMist 18s ease-in-out infinite alternate;
+  }
+
+  .hero-mist-delayed {
+    animation: heroMist 24s ease-in-out -7s infinite alternate-reverse;
+  }
+
+  @keyframes heroMist {
+    from {
+      transform: translateX(-30px);
+      opacity: 0.5;
+    }
+
+    to {
+      transform: translateX(80px);
+      opacity: 1;
+    }
+  }
+
+  .hero-lightning {
+    animation: heroLightning 9s linear infinite;
+  }
+
+  @keyframes heroLightning {
+    0%,
+    92%,
+    94%,
+    100% {
+      opacity: 0;
+    }
+
+    93% {
+      opacity: 1;
+    }
+
+    95% {
+      opacity: 0.35;
+    }
+  }
+
+  .hero-star {
+    animation: heroStar 3s ease-in-out infinite;
+  }
+
+  @keyframes heroStar {
+    0%,
+    100% {
+      opacity: 0.25;
+      transform: scale(1);
+    }
+
+    50% {
+      opacity: 0.9;
+      transform: scale(1.5);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-rain,
+    .hero-snow,
+    .hero-cloud,
+    .hero-cloud-delayed,
+    .hero-mist,
+    .hero-mist-delayed,
+    .hero-lightning,
+    .hero-star {
+      animation: none !important;
+    }
+  }
+
+  /* ========================================
+   HERO BACKGROUND FADE
+======================================== */
+
+  .hero-bg-fade {
+    animation: heroBackgroundFade 700ms ease-out;
+    will-change: opacity, transform;
+  }
+
+  @keyframes heroBackgroundFade {
+    from {
+      opacity: 0;
+      transform: scale(1.02);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-bg-fade {
+      animation: none;
+    }
+  }
+
+  /* ========================================
+   WEATHER CARD ICON ANIMATIONS
+======================================== */
+
+  /* CLEAR */
+
+  .weather-icon-sun-glow {
+    animation: weatherSunGlow 3s ease-in-out infinite;
+  }
+
+  .weather-icon-sun-glow-delayed {
+    animation: weatherSunGlow 3s ease-in-out 1.2s infinite;
+  }
+
+  @keyframes weatherSunGlow {
+    0%,
+    100% {
+      transform: scale(0.95);
+      opacity: 0.45;
+    }
+
+    50% {
+      transform: scale(1.12);
+      opacity: 0.9;
+    }
+  }
+
+  /* CLOUDS */
+
+  .weather-icon-cloud {
+    animation: weatherCloudMove 7s ease-in-out infinite alternate;
+  }
+
+  .weather-icon-cloud-delayed {
+    animation: weatherCloudMove 9s ease-in-out 1.5s infinite alternate-reverse;
+  }
+
+  .weather-main-cloud {
+    animation: weatherMainCloud 5s ease-in-out infinite;
+  }
+
+  @keyframes weatherCloudMove {
+    from {
+      transform: translateX(-4px);
+    }
+
+    to {
+      transform: translateX(15px);
+    }
+  }
+
+  @keyframes weatherMainCloud {
+    0%,
+    100% {
+      transform: translateX(-2px);
+    }
+
+    50% {
+      transform: translateX(3px);
+    }
+  }
+
+  /* RAIN */
+
+  .weather-icon-rain {
+    animation: weatherRainDrop 1.15s linear infinite;
+  }
+
+  @keyframes weatherRainDrop {
+    0% {
+      transform: translate3d(8px, -8px, 0) rotate(12deg);
+      opacity: 0;
+    }
+
+    20% {
+      opacity: 0.8;
+    }
+
+    100% {
+      transform: translate3d(-6px, 26px, 0) rotate(12deg);
+      opacity: 0;
+    }
+  }
+
+  /* SNOW */
+
+  .weather-icon-snow {
+    animation: weatherSnowFall 3.4s linear infinite;
+  }
+
+  @keyframes weatherSnowFall {
+    0% {
+      transform: translate3d(0, -6px, 0);
+      opacity: 0;
+    }
+
+    15% {
+      opacity: 0.9;
+    }
+
+    50% {
+      transform: translate3d(6px, 12px, 0);
+    }
+
+    100% {
+      transform: translate3d(-4px, 30px, 0);
+      opacity: 0;
+    }
+  }
+
+  /* THUNDERSTORM */
+
+  .weather-icon-lightning {
+    animation: weatherLightning 6s linear infinite;
+  }
+
+  @keyframes weatherLightning {
+    0%,
+    88%,
+    91%,
+    94%,
+    100% {
+      opacity: 0;
+    }
+
+    89% {
+      opacity: 0.8;
+    }
+
+    92% {
+      opacity: 0.3;
+    }
+
+    93% {
+      opacity: 0.65;
+    }
+  }
+
+  /* ACCESSIBILITY */
+
+  @media (prefers-reduced-motion: reduce) {
+    .weather-icon-sun-glow,
+    .weather-icon-sun-glow-delayed,
+    .weather-icon-cloud,
+    .weather-icon-cloud-delayed,
+    .weather-main-cloud,
+    .weather-icon-rain,
+    .weather-icon-snow,
+    .weather-icon-lightning {
+      animation: none !important;
+    }
+  }
+
+  @keyframes toastEnter {
+    from {
+      opacity: 0;
+      transform: translate3d(25px, -8px, 0);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+
+  .toast-enter {
+    animation: toastEnter 260ms ease-out;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .toast-enter {
+      animation: none;
+    }
+  }
+
+  /* ========================================
+   HERO SEARCH SCROLLBAR
+======================================== */
+
+  .hero-search-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: #ffb36c transparent;
+  }
+
+  .hero-search-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .hero-search-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .hero-search-scroll::-webkit-scrollbar-thumb {
+    background: #ffb36c;
+    border-radius: 999px;
+  }
+
+  .hero-search-scroll::-webkit-scrollbar-thumb:hover {
+    background: #ffa95d;
+  }
 }

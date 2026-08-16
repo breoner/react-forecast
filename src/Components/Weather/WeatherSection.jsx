@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
+
 import WeatherCard from "./WeatherCard";
 import WeatherDetails from "./WeatherDetails";
 import HourlyForecast from "./HourlyForecast";
@@ -12,24 +13,93 @@ function WeatherSection({
   onDelete,
   onRefresh,
   onToggleFavorite,
+  onSetHomeCity,
   isDark,
   language,
 }) {
   const [selectedCityId, setSelectedCityId] = useState(null);
-
   const [detailsCityId, setDetailsCityId] = useState(null);
-
   const [forecastCityId, setForecastCityId] = useState(null);
-
   const [forecast, setForecast] = useState(null);
-
   const [showHourly, setShowHourly] = useState(false);
-
   const [showWeekly, setShowWeekly] = useState(false);
-
   const [assistantCityId, setAssistantCityId] = useState(null);
-
   const [assistantContentId, setAssistantContentId] = useState(null);
+  const [refreshingCityId, setRefreshingCityId] = useState(null);
+
+  const cardElementsRef = useRef(new Map());
+  const previousPositionsRef = useRef(new Map());
+
+  const setCardElement = (id, element) => {
+    if (element) {
+      cardElementsRef.current.set(id, element);
+    } else {
+      cardElementsRef.current.delete(id);
+    }
+  };
+
+  const sortedCities = [...cities].sort((a, b) => {
+    if (a.isHome !== b.isHome) {
+      return Number(b.isHome) - Number(a.isHome);
+    }
+
+    return Number(b.isFavorite) - Number(a.isFavorite);
+  });
+
+  useLayoutEffect(() => {
+    const newPositions = new Map();
+
+    sortedCities.forEach((city) => {
+      const element = cardElementsRef.current.get(city.id);
+
+      if (!element) {
+        return;
+      }
+
+      const newRect = element.getBoundingClientRect();
+
+      newPositions.set(city.id, newRect);
+
+      const previousRect = previousPositionsRef.current.get(city.id);
+
+      if (!previousRect) {
+        return;
+      }
+
+      const deltaY = previousRect.top - newRect.top;
+
+      if (Math.abs(deltaY) < 1) {
+        return;
+      }
+
+      element.style.transition = "none";
+      element.style.transform = `translateY(${deltaY}px)`;
+
+      element.getBoundingClientRect();
+
+      requestAnimationFrame(() => {
+        element.style.transition =
+          "transform 500ms cubic-bezier(0.22, 1, 0.36, 1)";
+
+        element.style.transform = "translateY(0px)";
+      });
+
+      const handleTransitionEnd = (event) => {
+        if (event.propertyName !== "transform") {
+          return;
+        }
+
+        element.style.transition = "";
+        element.style.transform = "";
+
+        element.removeEventListener("transitionend", handleTransitionEnd);
+      };
+
+      element.addEventListener("transitionend", handleTransitionEnd);
+    });
+
+    previousPositionsRef.current = newPositions;
+  }, [cities]);
 
   if (cities.length === 0) {
     return null;
@@ -141,10 +211,6 @@ function WeatherSection({
     onDelete(id);
   };
 
-  const sortedCities = [...cities].sort(
-    (a, b) => Number(b.isFavorite) - Number(a.isFavorite),
-  );
-
   return (
     <section
       id="weather"
@@ -153,20 +219,40 @@ function WeatherSection({
       <div className="mx-auto w-full max-w-[1160px] px-[16px] md:px-[24px] xl:px-[10px]">
         <div className="flex flex-wrap justify-center gap-[25px] md:gap-[40px]">
           {sortedCities.map((city) => (
-            <WeatherCard
+            <div
               key={city.id}
-              city={city.place}
-              weather={city.weather}
-              isFavorite={city.isFavorite}
-              onDetails={() => handleDetails(city.id)}
-              onDelete={() => handleDelete(city.id)}
-              onRefresh={() => onRefresh(city.id)}
-              onToggleFavorite={() => onToggleFavorite(city.id)}
-              onHourlyForecast={() => handleHourlyForecast(city)}
-              onWeeklyForecast={() => handleWeeklyForecast(city)}
-              onAssistant={() => handleAssistant(city.id)}
-              language={language}
-            />
+              ref={(element) => setCardElement(city.id, element)}
+              className="w-full max-w-[340px]"
+            >
+              <WeatherCard
+                city={city.place}
+                weather={city.weather}
+                isFavorite={city.isFavorite}
+                isHome={city.isHome}
+                isRefreshing={refreshingCityId === city.id}
+                onDetails={() => handleDetails(city.id)}
+                onDelete={() => handleDelete(city.id)}
+                onRefresh={async () => {
+                  if (refreshingCityId === city.id) {
+                    return;
+                  }
+
+                  try {
+                    setRefreshingCityId(city.id);
+
+                    await onRefresh(city.id);
+                  } finally {
+                    setRefreshingCityId(null);
+                  }
+                }}
+                onToggleFavorite={() => onToggleFavorite(city.id)}
+                onSetHomeCity={() => onSetHomeCity(city.id)}
+                onHourlyForecast={() => handleHourlyForecast(city)}
+                onWeeklyForecast={() => handleWeeklyForecast(city)}
+                onAssistant={() => handleAssistant(city.id)}
+                language={language}
+              />
+            </div>
           ))}
         </div>
 

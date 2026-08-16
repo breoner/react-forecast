@@ -6,6 +6,7 @@ import NewsSection from "./Components/News/NewsSection";
 import NatureSection from "./Components/Nature/NatureSection";
 import Footer from "./Components/Footer/Footer";
 import SeasonalDecor from "./Components/SeasonalDecor/SeasonalDecor";
+import Toast from "./Components/Toast/Toast";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -16,7 +17,10 @@ function App() {
     return savedCities ? JSON.parse(savedCities) : [];
   });
 
-  const [error, setError] = useState("");
+  const [toast, setToast] = useState({
+    message: "",
+    type: "info",
+  });
 
   const [isDark, setIsDark] = useState(() => {
     return localStorage.getItem("theme") === "dark";
@@ -25,6 +29,32 @@ function App() {
   const [language, setLanguage] = useState(() => {
     return localStorage.getItem("language") || "en";
   });
+
+  /*
+    ========================================
+    TOAST
+    ========================================
+  */
+
+  const showToast = (message, type = "info") => {
+    setToast({
+      message,
+      type,
+    });
+  };
+
+  const closeToast = () => {
+    setToast({
+      message: "",
+      type: "info",
+    });
+  };
+
+  /*
+    ========================================
+    LOCAL STORAGE
+    ========================================
+  */
 
   useEffect(() => {
     localStorage.setItem("cities", JSON.stringify(cities));
@@ -50,6 +80,12 @@ function App() {
     document.documentElement.lang = language === "ua" ? "uk" : "en";
   }, [language]);
 
+  /*
+    ========================================
+    SETTINGS
+    ========================================
+  */
+
   const handleToggleTheme = () => {
     setIsDark((currentTheme) => !currentTheme);
   };
@@ -58,19 +94,24 @@ function App() {
     setLanguage((currentLanguage) => (currentLanguage === "en" ? "ua" : "en"));
   };
 
+  /*
+    ========================================
+    SEARCH / ADD CITY
+    ========================================
+  */
+
   const handleSearch = async (place) => {
     try {
-      setError("");
-
       const isAlreadyAdded = cities.some(
         (city) => city.place.lat === place.lat && city.place.lon === place.lon,
       );
 
       if (isAlreadyAdded) {
-        setError(
+        showToast(
           language === "ua"
             ? "Це місто вже додано"
             : "This city is already added",
+          "error",
         );
 
         return;
@@ -95,30 +136,127 @@ function App() {
         place,
         weather,
         isFavorite: false,
+        isHome: false,
       };
 
       setCities((prevCities) => [...prevCities, newCity]);
+
+      showToast(
+        language === "ua" ? `${place.name} додано` : `${place.name} added`,
+        "success",
+      );
     } catch (error) {
-      setError(error.message);
+      showToast(
+        error.message ||
+          (language === "ua" ? "Сталася помилка" : "Something went wrong"),
+        "error",
+      );
     }
   };
 
+  /*
+    ========================================
+    DELETE CITY
+    ========================================
+  */
+
   const handleDeleteCity = (id) => {
+    const cityToDelete = cities.find((city) => city.id === id);
+
     setCities((prevCities) => prevCities.filter((city) => city.id !== id));
+
+    if (cityToDelete) {
+      showToast(
+        language === "ua"
+          ? `${cityToDelete.place.name} видалено`
+          : `${cityToDelete.place.name} removed`,
+        "info",
+      );
+    }
   };
 
+  /*
+    ========================================
+    FAVORITE
+    ========================================
+  */
+
   const handleToggleFavorite = (id) => {
+    const city = cities.find((city) => city.id === id);
+
+    if (!city) {
+      return;
+    }
+
+    const nextFavorite = !city.isFavorite;
+
     setCities((prevCities) =>
-      prevCities.map((city) =>
-        city.id === id
+      prevCities.map((item) =>
+        item.id === id
           ? {
-              ...city,
-              isFavorite: !city.isFavorite,
+              ...item,
+              isFavorite: nextFavorite,
             }
-          : city,
+          : item,
       ),
     );
+
+    showToast(
+      language === "ua"
+        ? nextFavorite
+          ? `${city.place.name} додано в обране`
+          : `${city.place.name} видалено з обраного`
+        : nextFavorite
+          ? `${city.place.name} added to favorites`
+          : `${city.place.name} removed from favorites`,
+      "info",
+    );
   };
+
+  /*
+    ========================================
+    HOME CITY
+    ========================================
+  */
+
+  const handleSetHomeCity = (id) => {
+    const city = cities.find((city) => city.id === id);
+
+    if (!city) {
+      return;
+    }
+
+    if (city.isHome) {
+      showToast(
+        language === "ua"
+          ? `${city.place.name} вже є головним містом`
+          : `${city.place.name} is already your home city`,
+        "info",
+      );
+
+      return;
+    }
+
+    setCities((prevCities) =>
+      prevCities.map((item) => ({
+        ...item,
+        isHome: item.id === id,
+      })),
+    );
+
+    showToast(
+      language === "ua"
+        ? `${city.place.name} тепер головне місто`
+        : `${city.place.name} is now your home city`,
+      "success",
+    );
+  };
+
+  /*
+    ========================================
+    REFRESH WEATHER
+    ========================================
+  */
 
   const handleRefreshCity = async (id) => {
     const city = cities.find((city) => city.id === id);
@@ -128,8 +266,6 @@ function App() {
     }
 
     try {
-      setError("");
-
       const apiLanguage = language === "ua" ? "uk" : "en";
 
       const response = await fetch(
@@ -156,14 +292,41 @@ function App() {
             : item,
         ),
       );
+
+      showToast(
+        language === "ua"
+          ? `${city.place.name}: погоду оновлено`
+          : `${city.place.name}: weather updated`,
+        "success",
+      );
     } catch (error) {
-      setError(error.message);
+      showToast(
+        error.message ||
+          (language === "ua"
+            ? "Не вдалося оновити погоду"
+            : "Failed to refresh weather"),
+        "error",
+      );
     }
   };
+
+  /*
+    ========================================
+    HERO CITY
+    ========================================
+  */
+
+  const homeCity =
+    cities.find((city) => city.isHome) ||
+    cities.find((city) => city.isFavorite) ||
+    cities[0] ||
+    null;
 
   return (
     <div className="min-h-screen bg-white text-black transition-colors duration-300 dark:bg-[#121212] dark:text-white">
       <SeasonalDecor />
+
+      <Toast message={toast.message} type={toast.type} onClose={closeToast} />
 
       <Header
         isDark={isDark}
@@ -172,19 +335,18 @@ function App() {
         onToggleLanguage={handleToggleLanguage}
       />
 
-      <Hero onSearch={handleSearch} language={language} />
-
-      {error && (
-        <p className="mt-[20px] text-center text-[14px] text-red-500">
-          {error}
-        </p>
-      )}
+      <Hero
+        onSearch={handleSearch}
+        language={language}
+        featuredCity={homeCity}
+      />
 
       <WeatherSection
         cities={cities}
         onDelete={handleDeleteCity}
         onRefresh={handleRefreshCity}
         onToggleFavorite={handleToggleFavorite}
+        onSetHomeCity={handleSetHomeCity}
         isDark={isDark}
         language={language}
       />
