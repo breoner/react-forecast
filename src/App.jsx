@@ -5,6 +5,7 @@ import WeatherSection from "./Components/Weather/WeatherSection";
 import NewsSection from "./Components/News/NewsSection";
 import NatureSection from "./Components/Nature/NatureSection";
 import Footer from "./Components/Footer/Footer";
+import SeasonalDecor from "./Components/SeasonalDecor/SeasonalDecor";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
 
@@ -162,6 +163,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white text-black transition-colors duration-300 dark:bg-[#121212] dark:text-white">
+      <SeasonalDecor />
+
       <Header
         isDark={isDark}
         onToggleTheme={handleToggleTheme}
