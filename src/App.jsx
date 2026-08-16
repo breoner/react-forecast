@@ -34,9 +34,11 @@ function App() {
 
     if (isDark) {
       root.classList.add("dark");
+
       localStorage.setItem("theme", "dark");
     } else {
       root.classList.remove("dark");
+
       localStorage.setItem("theme", "light");
     }
   }, [isDark]);
@@ -44,8 +46,7 @@ function App() {
   useEffect(() => {
     localStorage.setItem("language", language);
 
-    document.documentElement.lang =
-      language === "ua" ? "uk" : "en";
+    document.documentElement.lang = language === "ua" ? "uk" : "en";
   }, [language]);
 
   const handleToggleTheme = () => {
@@ -53,9 +54,7 @@ function App() {
   };
 
   const handleToggleLanguage = () => {
-    setLanguage((currentLanguage) =>
-      currentLanguage === "en" ? "ua" : "en",
-    );
+    setLanguage((currentLanguage) => (currentLanguage === "en" ? "ua" : "en"));
   };
 
   const handleSearch = async (place) => {
@@ -63,9 +62,7 @@ function App() {
       setError("");
 
       const isAlreadyAdded = cities.some(
-        (city) =>
-          city.place.lat === place.lat &&
-          city.place.lon === place.lon,
+        (city) => city.place.lat === place.lat && city.place.lon === place.lon,
       );
 
       if (isAlreadyAdded) {
@@ -78,8 +75,7 @@ function App() {
         return;
       }
 
-      const apiLanguage =
-        language === "ua" ? "uk" : "en";
+      const apiLanguage = language === "ua" ? "uk" : "en";
 
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${place.lat}&lon=${place.lon}&appid=${API_KEY}&units=metric&lang=${apiLanguage}`,
@@ -87,9 +83,7 @@ function App() {
 
       if (!response.ok) {
         throw new Error(
-          language === "ua"
-            ? "Погоду не знайдено"
-            : "Weather not found",
+          language === "ua" ? "Погоду не знайдено" : "Weather not found",
         );
       }
 
@@ -102,19 +96,14 @@ function App() {
         isFavorite: false,
       };
 
-      setCities((prevCities) => [
-        ...prevCities,
-        newCity,
-      ]);
+      setCities((prevCities) => [...prevCities, newCity]);
     } catch (error) {
       setError(error.message);
     }
   };
 
   const handleDeleteCity = (id) => {
-    setCities((prevCities) =>
-      prevCities.filter((city) => city.id !== id),
-    );
+    setCities((prevCities) => prevCities.filter((city) => city.id !== id));
   };
 
   const handleToggleFavorite = (id) => {
@@ -140,8 +129,7 @@ function App() {
     try {
       setError("");
 
-      const apiLanguage =
-        language === "ua" ? "uk" : "en";
+      const apiLanguage = language === "ua" ? "uk" : "en";
 
       const response = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?lat=${city.place.lat}&lon=${city.place.lon}&appid=${API_KEY}&units=metric&lang=${apiLanguage}`,
@@ -181,10 +169,7 @@ function App() {
         onToggleLanguage={handleToggleLanguage}
       />
 
-      <Hero
-        onSearch={handleSearch}
-        language={language}
-      />
+      <Hero onSearch={handleSearch} language={language} />
 
       {error && (
         <p className="mt-[20px] text-center text-[14px] text-red-500">
@@ -203,12 +188,9 @@ function App() {
 
       <NewsSection language={language} />
 
-      <NatureSection language={language} />
+      <NatureSection cities={cities} language={language} />
 
-      <Footer
-        isDark={isDark}
-        language={language}
-      />
+      <Footer isDark={isDark} language={language} />
     </div>
   );
 }

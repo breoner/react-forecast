@@ -125,34 +125,107 @@ function WeatherAssistant({ weather, onClose, language }) {
 
   /*
     ----------------------------
-    COMFORT SCORE
+    SCORE HELPERS
     ----------------------------
   */
 
-  let comfortScore = 10;
+  const clampScore = (score) =>
+    Math.max(0, Math.min(10, Math.round(score)));
 
-  // Temperature
-  if (feelsLike <= -40) {
-    comfortScore = 0;
-  } else if (feelsLike <= -25) {
-    comfortScore -= 8;
-  } else if (feelsLike <= -15) {
-    comfortScore -= 6;
-  } else if (feelsLike <= -5) {
-    comfortScore -= 4;
-  } else if (feelsLike < 5) {
-    comfortScore -= 2;
-  } else if (feelsLike > 40) {
-    comfortScore -= 8;
-  } else if (feelsLike > 35) {
-    comfortScore -= 6;
-  } else if (feelsLike > 30) {
-    comfortScore -= 3;
-  } else if (feelsLike >= 15 && feelsLike <= 25) {
+  /*
+    ----------------------------
+    COMFORT SCORE
+    ----------------------------
+
+    10/10 теперь означает почти идеальные
+    погодные условия, а не просто отсутствие
+    плохой погоды.
+  */
+
+  let comfortScore = 7;
+
+  // FEELS LIKE TEMPERATURE
+  if (feelsLike >= 18 && feelsLike <= 23) {
+    comfortScore += 2;
+  } else if (
+    (feelsLike >= 15 && feelsLike < 18) ||
+    (feelsLike > 23 && feelsLike <= 26)
+  ) {
     comfortScore += 1;
+  } else if (
+    (feelsLike >= 10 && feelsLike < 15) ||
+    (feelsLike > 26 && feelsLike <= 29)
+  ) {
+    // Нормально — без бонуса.
+  } else if (
+    (feelsLike >= 5 && feelsLike < 10) ||
+    (feelsLike > 29 && feelsLike <= 32)
+  ) {
+    comfortScore -= 1;
+  } else if (
+    (feelsLike >= 0 && feelsLike < 5) ||
+    (feelsLike > 32 && feelsLike <= 35)
+  ) {
+    comfortScore -= 2;
+  } else if (
+    (feelsLike >= -10 && feelsLike < 0) ||
+    (feelsLike > 35 && feelsLike <= 40)
+  ) {
+    comfortScore -= 4;
+  } else if (
+    (feelsLike >= -20 && feelsLike < -10) ||
+    (feelsLike > 40 && feelsLike <= 45)
+  ) {
+    comfortScore -= 6;
+  } else if (
+    feelsLike < -20 ||
+    feelsLike > 45
+  ) {
+    comfortScore -= 8;
   }
 
-  // Weather
+  // HUMIDITY
+  if (humidity >= 40 && humidity <= 60) {
+    comfortScore += 1;
+  } else if (
+    humidity >= 70 &&
+    humidity < 80
+  ) {
+    comfortScore -= 1;
+  } else if (
+    humidity >= 80 &&
+    humidity < 90
+  ) {
+    comfortScore -= 2;
+  } else if (humidity >= 90) {
+    comfortScore -= 3;
+  } else if (humidity < 25) {
+    comfortScore -= 1;
+  }
+
+  // WIND
+  if (wind >= 1 && wind <= 3.5) {
+    comfortScore += 1;
+  } else if (
+    wind >= 7 &&
+    wind < 10
+  ) {
+    comfortScore -= 1;
+  } else if (
+    wind >= 10 &&
+    wind < 15
+  ) {
+    comfortScore -= 2;
+  } else if (
+    wind >= 15 &&
+    wind < 20
+  ) {
+    comfortScore -= 4;
+  } else if (wind >= 20) {
+    comfortScore -= 7;
+  }
+
+  // WEATHER
   if (isRain) {
     comfortScore -= 2;
   }
@@ -162,33 +235,36 @@ function WeatherAssistant({ weather, onClose, language }) {
   }
 
   if (isThunderstorm) {
-    comfortScore -= 5;
+    comfortScore -= 6;
   }
 
-  // Wind
-  if (wind >= 20) {
-    comfortScore -= 5;
-  } else if (wind >= 10) {
-    comfortScore -= 2;
-  } else if (wind >= 7) {
-    comfortScore -= 1;
-  }
-
-  // Humidity
-  if (humidity >= 90) {
-    comfortScore -= 2;
-  } else if (humidity >= 80) {
-    comfortScore -= 1;
-  }
-
-  // Visibility
+  // VISIBILITY
   if (visibility < 1000) {
-    comfortScore -= 3;
+    comfortScore -= 4;
   } else if (visibility < 3000) {
+    comfortScore -= 2;
+  } else if (visibility < 5000) {
     comfortScore -= 1;
   }
 
-  comfortScore = Math.max(0, Math.min(10, comfortScore));
+  // EXTREME CONDITIONS OVERRIDE
+  if (
+    feelsLike <= -40 ||
+    feelsLike >= 48 ||
+    wind >= 28
+  ) {
+    comfortScore = 0;
+  }
+
+  if (isThunderstorm && wind >= 15) {
+    comfortScore = Math.min(
+      comfortScore,
+      1,
+    );
+  }
+
+  comfortScore =
+    clampScore(comfortScore);
 
   /*
     ----------------------------
@@ -198,22 +274,48 @@ function WeatherAssistant({ weather, onClose, language }) {
 
   let outdoor = "";
 
-  if (feelsLike <= -30 || feelsLike >= 40 || isThunderstorm || wind >= 20) {
+  if (
+    comfortScore <= 2 ||
+    feelsLike <= -30 ||
+    feelsLike >= 40 ||
+    isThunderstorm ||
+    wind >= 20
+  ) {
     outdoor =
       language === "ua"
-        ? "Не рекомендується. Погодні умови можуть бути небезпечними."
-        : "Not recommended. Weather conditions may be dangerous.";
-  } else if (feelsLike <= -15 || feelsLike >= 35 || isSnow || wind >= 12) {
+        ? "Активності надворі краще відкласти."
+        : "Outdoor activities are best postponed.";
+  } else if (
+    comfortScore <= 4 ||
+    feelsLike <= -15 ||
+    feelsLike >= 35 ||
+    isSnow ||
+    wind >= 12
+  ) {
     outdoor =
       language === "ua"
-        ? "Тривале перебування на вулиці краще обмежити."
+        ? "Тривалі активності надворі краще обмежити."
         : "Consider limiting prolonged outdoor activity.";
   } else if (isRain) {
-    outdoor = t.assistant.stayInside;
-  } else if (feelsLike >= 15 && feelsLike <= 28 && wind < 8) {
-    outdoor = t.assistant.greatOutdoor;
+    outdoor =
+      language === "ua"
+        ? "Для прогулянки знадобиться захист від дощу."
+        : "Rain protection is recommended for outdoor activities.";
+  } else if (comfortScore >= 8) {
+    outdoor =
+      language === "ua"
+        ? "Чудова погода для активностей надворі."
+        : "Great weather for outdoor activities.";
+  } else if (comfortScore >= 6) {
+    outdoor =
+      language === "ua"
+        ? "Хороші умови для прогулянки."
+        : "Good conditions for a walk.";
   } else {
-    outdoor = t.assistant.okayOutdoor;
+    outdoor =
+      language === "ua"
+        ? "Умови прийнятні, але не ідеальні."
+        : "Conditions are acceptable, but not ideal.";
   }
 
   /*
@@ -224,8 +326,13 @@ function WeatherAssistant({ weather, onClose, language }) {
 
   let driving = "";
 
-  if (isThunderstorm || visibility < 1000 || wind >= 20) {
-    driving = t.assistant.dangerousDriving;
+  if (
+    isThunderstorm ||
+    visibility < 1000 ||
+    wind >= 20
+  ) {
+    driving =
+      t.assistant.dangerousDriving;
   } else if (
     isSnow ||
     isRain ||
@@ -233,114 +340,346 @@ function WeatherAssistant({ weather, onClose, language }) {
     wind >= 10 ||
     feelsLike <= -20
   ) {
-    driving = t.assistant.carefulDriving;
+    driving =
+      t.assistant.carefulDriving;
   } else {
-    driving = t.assistant.goodDriving;
+    driving =
+      t.assistant.goodDriving;
   }
 
   /*
     ----------------------------
     ACTIVITIES
     ----------------------------
+
+    Каждая активность считается отдельно.
+    Поэтому теперь не будет постоянных
+    10/10 для всего сразу.
   */
 
-  const clampScore = (score) => Math.max(0, Math.min(10, score));
+  const calculateWalkingScore = () => {
+    let score = 7;
 
-  let walkingScore = 10;
-  let runningScore = 10;
-  let cyclingScore = 10;
-  let carWashScore = 10;
+    // Temperature
+    if (
+      feelsLike >= 15 &&
+      feelsLike <= 24
+    ) {
+      score += 2;
+    } else if (
+      feelsLike >= 10 &&
+      feelsLike < 15
+    ) {
+      score += 1;
+    } else if (
+      feelsLike > 24 &&
+      feelsLike <= 28
+    ) {
+      score += 1;
+    } else if (
+      feelsLike >= 0 &&
+      feelsLike < 5
+    ) {
+      score -= 2;
+    } else if (
+      feelsLike < 0
+    ) {
+      score -= 4;
+    } else if (
+      feelsLike > 32
+    ) {
+      score -= 3;
+    }
 
-  // Cold
-  if (feelsLike <= -40) {
-    walkingScore = 0;
-    runningScore = 0;
-    cyclingScore = 0;
-    carWashScore = 0;
-  } else if (feelsLike <= -25) {
-    walkingScore -= 9;
-    runningScore -= 10;
-    cyclingScore -= 10;
-    carWashScore -= 10;
-  } else if (feelsLike <= -15) {
-    walkingScore -= 6;
-    runningScore -= 7;
-    cyclingScore -= 8;
-    carWashScore -= 9;
-  } else if (feelsLike <= -5) {
-    walkingScore -= 3;
-    runningScore -= 3;
-    cyclingScore -= 4;
-    carWashScore -= 6;
-  }
+    // Humidity
+    if (
+      humidity >= 75 &&
+      humidity < 90
+    ) {
+      score -= 1;
+    } else if (
+      humidity >= 90
+    ) {
+      score -= 2;
+    }
 
-  // Heat
-  if (feelsLike >= 40) {
-    walkingScore -= 8;
-    runningScore -= 10;
-    cyclingScore -= 9;
-    carWashScore -= 4;
-  } else if (feelsLike >= 35) {
-    walkingScore -= 5;
-    runningScore -= 7;
-    cyclingScore -= 6;
-    carWashScore -= 2;
-  } else if (feelsLike >= 30) {
-    walkingScore -= 2;
-    runningScore -= 3;
-    cyclingScore -= 2;
-  }
+    // Wind
+    if (wind >= 15) {
+      score -= 4;
+    } else if (wind >= 10) {
+      score -= 2;
+    } else if (wind >= 7) {
+      score -= 1;
+    }
 
-  // Rain
-  if (isRain) {
-    walkingScore -= 3;
-    runningScore -= 4;
-    cyclingScore -= 5;
-    carWashScore -= 10;
-  }
+    if (isRain) {
+      score -= 2;
+    }
 
-  // Snow
-  if (isSnow) {
-    walkingScore -= 3;
-    runningScore -= 5;
-    cyclingScore -= 8;
-    carWashScore -= 10;
-  }
+    if (isSnow) {
+      score -= 3;
+    }
 
-  // Thunderstorm
-  if (isThunderstorm) {
-    walkingScore = 0;
-    runningScore = 0;
-    cyclingScore = 0;
-    carWashScore = 0;
-  }
+    if (visibility < 3000) {
+      score -= 2;
+    }
 
-  // Wind
-  if (wind >= 20) {
-    walkingScore -= 7;
-    runningScore -= 8;
-    cyclingScore -= 10;
-    carWashScore -= 5;
-  } else if (wind >= 12) {
-    walkingScore -= 3;
-    runningScore -= 4;
-    cyclingScore -= 7;
-    carWashScore -= 2;
-  } else if (wind >= 8) {
-    cyclingScore -= 3;
-  }
+    if (
+      isThunderstorm ||
+      feelsLike <= -30 ||
+      feelsLike >= 42 ||
+      wind >= 22
+    ) {
+      return 0;
+    }
 
-  // Visibility
-  if (visibility < 1000) {
-    walkingScore -= 3;
-    runningScore -= 4;
-    cyclingScore -= 6;
-  }
+    return clampScore(score);
+  };
 
-  walkingScore = clampScore(walkingScore);
-  runningScore = clampScore(runningScore);
-  cyclingScore = clampScore(cyclingScore);
-  carWashScore = clampScore(carWashScore);
+  const calculateRunningScore = () => {
+    let score = 7;
+
+    // Running prefers cooler weather
+    if (
+      feelsLike >= 10 &&
+      feelsLike <= 18
+    ) {
+      score += 2;
+    } else if (
+      feelsLike > 18 &&
+      feelsLike <= 22
+    ) {
+      score += 1;
+    } else if (
+      feelsLike > 25 &&
+      feelsLike <= 28
+    ) {
+      score -= 2;
+    } else if (
+      feelsLike > 28 &&
+      feelsLike <= 32
+    ) {
+      score -= 4;
+    } else if (feelsLike > 32) {
+      score -= 6;
+    }
+
+    if (feelsLike < 0) {
+      score -= 3;
+    }
+
+    // Humidity matters more when exercising
+    if (
+      humidity >= 70 &&
+      humidity < 80
+    ) {
+      score -= 1;
+    } else if (
+      humidity >= 80 &&
+      humidity < 90
+    ) {
+      score -= 2;
+    } else if (
+      humidity >= 90
+    ) {
+      score -= 3;
+    }
+
+    if (wind >= 15) {
+      score -= 4;
+    } else if (wind >= 10) {
+      score -= 2;
+    } else if (wind >= 7) {
+      score -= 1;
+    }
+
+    if (isRain) {
+      score -= 3;
+    }
+
+    if (isSnow) {
+      score -= 5;
+    }
+
+    if (visibility < 3000) {
+      score -= 3;
+    }
+
+    if (
+      isThunderstorm ||
+      feelsLike <= -25 ||
+      feelsLike >= 38 ||
+      wind >= 20
+    ) {
+      return 0;
+    }
+
+    return clampScore(score);
+  };
+
+  const calculateCyclingScore = () => {
+    let score = 7;
+
+    if (
+      feelsLike >= 14 &&
+      feelsLike <= 23
+    ) {
+      score += 2;
+    } else if (
+      feelsLike >= 8 &&
+      feelsLike < 14
+    ) {
+      score += 1;
+    } else if (
+      feelsLike > 28
+    ) {
+      score -= 2;
+    } else if (
+      feelsLike < 5
+    ) {
+      score -= 2;
+    }
+
+    if (
+      humidity >= 80 &&
+      humidity < 90
+    ) {
+      score -= 1;
+    } else if (
+      humidity >= 90
+    ) {
+      score -= 2;
+    }
+
+    // Cycling is especially sensitive to wind
+    if (
+      wind >= 15
+    ) {
+      score -= 7;
+    } else if (
+      wind >= 12
+    ) {
+      score -= 5;
+    } else if (
+      wind >= 8
+    ) {
+      score -= 3;
+    } else if (
+      wind >= 5
+    ) {
+      score -= 1;
+    }
+
+    if (isRain) {
+      score -= 4;
+    }
+
+    if (isSnow) {
+      score -= 7;
+    }
+
+    if (visibility < 3000) {
+      score -= 4;
+    }
+
+    if (
+      isThunderstorm ||
+      feelsLike <= -20 ||
+      feelsLike >= 40 ||
+      wind >= 20 ||
+      visibility < 1000
+    ) {
+      return 0;
+    }
+
+    return clampScore(score);
+  };
+
+  const calculateCarWashScore = () => {
+    let score = 7;
+
+    /*
+      Для мойки температура не должна
+      давать такой же бонус, как прогулке.
+    */
+
+    if (
+      feelsLike >= 10 &&
+      feelsLike <= 28
+    ) {
+      score += 1;
+    } else if (
+      feelsLike >= 5 &&
+      feelsLike < 10
+    ) {
+      // Acceptable
+    } else if (
+      feelsLike >= 0 &&
+      feelsLike < 5
+    ) {
+      score -= 2;
+    } else if (
+      feelsLike < 0
+    ) {
+      score -= 6;
+    } else if (
+      feelsLike > 35
+    ) {
+      score -= 2;
+    }
+
+    /*
+      Сильный ветер = пыль и быстрое
+      загрязнение автомобиля.
+    */
+
+    if (
+      wind >= 15
+    ) {
+      score -= 4;
+    } else if (
+      wind >= 10
+    ) {
+      score -= 2;
+    } else if (
+      wind >= 7
+    ) {
+      score -= 1;
+    }
+
+    if (isRain) {
+      return 0;
+    }
+
+    if (isSnow) {
+      return 0;
+    }
+
+    if (isThunderstorm) {
+      return 0;
+    }
+
+    if (
+      feelsLike <= -5 ||
+      wind >= 22
+    ) {
+      return 0;
+    }
+
+    return clampScore(score);
+  };
+
+  const walkingScore =
+    calculateWalkingScore();
+
+  const runningScore =
+    calculateRunningScore();
+
+  const cyclingScore =
+    calculateCyclingScore();
+
+  const carWashScore =
+    calculateCarWashScore();
 
   const activities = [
     {

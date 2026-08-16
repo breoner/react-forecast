@@ -3,21 +3,22 @@ function ThemeToggle({ isDark, onToggle }) {
     <button
       type="button"
       onClick={onToggle}
-      aria-label="Toggle theme"
+      aria-label={isDark ? "Switch to light theme" : "Switch to dark theme"}
       className="relative h-[32px] w-[62px] rounded-full bg-[#D9D9D9] p-[4px] transition-colors duration-300 dark:bg-[#3A3A3A]"
     >
       <span
-        className={`flex h-[24px] w-[24px] items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 ${
+        className={`flex h-[24px] w-[24px] items-center justify-center rounded-full bg-white text-black shadow-sm transition-transform duration-300 ${
           isDark ? "translate-x-[30px]" : "translate-x-0"
         }`}
       >
         {isDark ? (
+          /* MOON */
           <svg
             viewBox="0 0 24 24"
-            className="h-[16px] w-[16px]"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.8"
+            className="h-[16px] w-[16px] text-[#222222]"
           >
             <path
               strokeLinecap="round"
@@ -26,12 +27,13 @@ function ThemeToggle({ isDark, onToggle }) {
             />
           </svg>
         ) : (
+          /* SUN */
           <svg
             viewBox="0 0 24 24"
-            className="h-[16px] w-[16px]"
             fill="none"
             stroke="currentColor"
             strokeWidth="1.8"
+            className="h-[16px] w-[16px] text-[#222222]"
           >
             <circle cx="12" cy="12" r="4" />
 
